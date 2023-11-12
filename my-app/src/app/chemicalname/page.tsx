@@ -45,6 +45,7 @@ export default function Page() {
                   name="chemicalname"
                   id="chemicalname"
                   placeholder="Chemical Name"
+                  value={chemicalname}
                   onChange={(e) => {
                     setchemicalname(e.target.value);
                   }}
@@ -58,6 +59,7 @@ export default function Page() {
                   name="code"
                   id="code"
                   placeholder="Code"
+                  value={code}
                   onChange={(e) => {
                     setCode(e.target.value);
                   }}
@@ -71,6 +73,7 @@ export default function Page() {
                   name="description"
                   id="description"
                   placeholder="Description"
+                  value={description}
                   onChange={(e) => {
                     setDescription(e.target.value);
                   }}
