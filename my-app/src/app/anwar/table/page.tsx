@@ -4,7 +4,7 @@ export default function Page() {
       <body className="antialiased bg-gray-200">
         <div className="container mx-auto mt-24 w-4/5">
           <div className="text-sm rounded-lg shadow-md">
-            <div className="tbl-headerbar hidden md:block bg-indigo-500 h-10 rounded-t-lg shadow-md">
+            <div className="tbl-headerbar hidden md:block bg-indigo-500 h-10 rounded-t-lg shadow-md ">
               <p className="p-2 text-white">My Table - 1</p>
             </div>
 

@@ -31,14 +31,16 @@ export default function Page() {
   return (
     <div>
       <body className="antialiased bg-gray-200 text-gray-900 font-sans">
-        <div className="flex items-center h-screen w-full">
+        <div className="flex items-start h-screen w-full">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
-            <span className="block w-full text-xl uppercase font-bold mb-4">
-              Supplier Form
+            <span className="block w-full text-2xl uppercase font-bold mb-4">
+              Supplier Name Form
             </span>
             <form className="mb-4">
               <div className="mb-4 md:w-full">
-                <label className="block text-xs mb-1">Supplier name</label>
+                <label className="block text-xl font-semibold mb-1">
+                  Supplier name
+                </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
@@ -52,7 +54,7 @@ export default function Page() {
                 />
               </div>
               <div className="mb-6 md:w-full">
-                <label className="block text-xs mb-1">Code</label>
+                <label className="block text-xl font-semibold mb-1">Code</label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="number"
@@ -66,7 +68,9 @@ export default function Page() {
                 />
               </div>
               <div className="mb-6 md:w-full">
-                <label className="block text-xs mb-1">Description</label>
+                <label className="block text-xl font-semibold mb-1">
+                  Description
+                </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
@@ -87,6 +91,90 @@ export default function Page() {
                 Submit
               </button>
             </form>
+          </div>
+        </div>
+
+        <div className="grid2" style={{ marginTop: "-250px" }}>
+          <div className="grid-container2">
+            <table>
+              <thead>
+                <tr className="header2">
+                  <th>
+                    Chemical Name<div>Chemical Name</div>
+                  </th>
+                  <th>
+                    Code<div>Code</div>
+                  </th>
+                  <th>
+                    Description<div>Description</div>
+                  </th>
+                  <th>
+                    Edit<div>Edit</div>
+                  </th>
+                  <th>
+                    Delete<div>Delete</div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Suresh Dasari</td>
+                  <td>B.Tech</td>
+                  <td>Chennai</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Rohini Dasari</td>
+                  <td>Msc</td>
+                  <td>Chennai</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Madhav Sai</td>
+                  <td>MBA</td>
+                  <td>Nagpur</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Praveen Kumar</td>
+                  <td>B.Tech</td>
+                  <td>Guntur</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Mahendra Dasari</td>
+                  <td>CA</td>
+                  <td>Chennai</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Nagaraju Dasari</td>
+                  <td>MCA</td>
+                  <td>USA</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Sateesh Alavala</td>
+                  <td>MD</td>
+                  <td>Vizag</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+                <tr>
+                  <td>Sudheer</td>
+                  <td>B.Tech</td>
+                  <td>Kakinada</td>
+                  <td>Chennai</td>
+                  <td>Hydrogen</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </body>
