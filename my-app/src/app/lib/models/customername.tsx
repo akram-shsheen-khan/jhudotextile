@@ -1,0 +1,21 @@
+import mongoose from "mongoose";
+
+/* ChemicalNameSchema will correspond to the recipe collection in the MongoDB database. */
+const CustomerNameSchema = new mongoose.Schema({
+  code: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  customername: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
+
+export default mongoose.models.CustomerName ||
+  mongoose.model("CustomerName", CustomerNameSchema);

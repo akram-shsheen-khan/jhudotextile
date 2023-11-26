@@ -1,3 +1,5 @@
+import custom from "./custom.module.css";
+
 import React from "react";
 
 export default function page() {
@@ -6,6 +8,7 @@ export default function page() {
       <h1 style={{ display: "flex", justifyContent: "center" }}>
         Jhudo Textile
       </h1>
+
       <div className="grid2">
         <div className="grid-container2">
           <table>
@@ -26,6 +29,9 @@ export default function page() {
                 <th>
                   Chemical Name<div>Chemical Name</div>
                 </th>
+                <th>
+                  Dyes Name<div>Dyes Name</div>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -35,6 +41,7 @@ export default function page() {
                 <td>Chennai</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Rohini Dasari</td>
@@ -42,6 +49,7 @@ export default function page() {
                 <td>Chennai</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Madhav Sai</td>
@@ -49,6 +57,7 @@ export default function page() {
                 <td>Nagpur</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Praveen Kumar</td>
@@ -56,6 +65,7 @@ export default function page() {
                 <td>Guntur</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Mahendra Dasari</td>
@@ -63,6 +73,7 @@ export default function page() {
                 <td>Chennai</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Nagaraju Dasari</td>
@@ -70,11 +81,20 @@ export default function page() {
                 <td>USA</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
+                <td>Fixing</td>
               </tr>
               <tr>
                 <td>Sateesh Alavala</td>
                 <td>MD</td>
                 <td>Vizag</td>
+                <td>Chennai</td>
+                <td>Hydrogen</td>
+                <td>Fixing</td>
+              </tr>
+              <tr>
+                <td>Sudheer</td>
+                <td>B.Tech</td>
+                <td>Kakinada</td>
                 <td>Chennai</td>
                 <td>Hydrogen</td>
               </tr>

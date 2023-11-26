@@ -9,6 +9,7 @@ import { ChemicalI } from "../types/interface/chemicalName";
 import { SupplierI } from "../types/interface/suppliertName";
 import { ChemicalPurchasingI } from "../types/interface/chemicalPurchasing";
 import { handleFocus } from "../utils/globalFunctions";
+
 export default function Page() {
   const [date, setDate] = useState<string>("");
   const [challanno, setChallanno] = useState<string>("");
@@ -23,6 +24,7 @@ export default function Page() {
   const [chemicalNames, setChemicalNames] = useState<Array<ChemicalI>>([]);
   const [supplierNames, setsupplierNames] = useState<Array<SupplierI>>([]);
   const [onEdit, setOnEdit] = useState<ChemicalPurchasingI | null>(null);
+
   const onFinish = () => {
     if (onEdit) {
       axios
@@ -117,6 +119,7 @@ export default function Page() {
       setAmount(Number(onEdit.amount));
     }
   }, [onEdit]);
+
   const getChemicalPurchasing = async () => {
     try {
       fetch("http://localhost:3000/api/chemicalPurchasing")
@@ -206,7 +209,11 @@ export default function Page() {
                 Chemical Name
               </label>
               <Select
-                style={{ width: "170px" }}
+                style={{
+                  width: "350px",
+                  height: "48px",
+                  appearance: "none",
+                }}
                 showSearch
                 placeholder="Select a chemical"
                 value={chemicalname}
@@ -235,7 +242,7 @@ export default function Page() {
               </label>
 
               <Select
-                style={{ width: "170px" }}
+                style={{ width: "350px", height: "48px" }}
                 showSearch
                 placeholder="Select a Supplier"
                 optionFilterProp="children"
@@ -336,6 +343,18 @@ export default function Page() {
                   Chemical Name<div>Chemical Name</div>
                 </th>
                 <th>
+                  Supplier Name<div>Supplier Name</div>
+                </th>
+                <th>
+                  Quantity<div>Quantity</div>
+                </th>
+                <th>
+                  Rate<div>Rate</div>
+                </th>
+                <th>
+                  Amount<div>Amount</div>
+                </th>
+                <th>
                   Edit<div>Edit</div>
                 </th>
                 <th>
@@ -346,9 +365,13 @@ export default function Page() {
             <tbody>
               {chemicalPurchasing?.map((item: ChemicalPurchasingI) => (
                 <tr key={item._id}>
-                  <td width="30%">{item?.date}</td>
-                  <td width="20%">{item?.challanno}</td>
-                  <td width="20%">{item?.chemicalname}</td>
+                  <td width="20%">{item?.date}</td>
+                  <td width="15%">{item?.challanno}</td>
+                  <td width="15%">{item?.chemicalname}</td>
+                  <td width="15%">{item?.suppliername}</td>
+                  <td width="15%">{item?.quantity}</td>
+                  <td width="15%">{item?.rate}</td>
+                  <td width="10%">{item?.amount}</td>
                   <td width="5%">
                     <FaEdit onClick={() => handleEdit(item)} />
                   </td>

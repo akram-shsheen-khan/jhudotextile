@@ -1,74 +1,144 @@
 "use client";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FaTrash, FaEdit } from "react-icons/fa";
+import { SupplierI } from "../types/interface/suppliertName";
+import { toast } from "react-toastify";
+import { handleFocus } from "../utils/globalFunctions";
+
 export default function Page() {
-  const [suppliername, setsuppliername] = useState<any>("");
-  const [code, setCode] = useState<any>("");
-  const [description, setDescription] = useState<any>("");
+  const [suppliername, setSuppliername] = useState<string>("");
+  const [code, setCode] = useState<number>(0);
+  const [description, setDescription] = useState<string>("");
+
+  const [suppliers, setSuppliers] = useState<Array<SupplierI>>([]);
+  const [onEdit, setOnEdit] = useState<SupplierI | null>(null);
 
   const onFinish = () => {
-    console.log({
-      suppliername,
-      code,
-      description,
-    });
-    axios
-      .post("http://localhost:3000/api/suppliername", {
-        suppliername,
-        code,
-        description,
-      })
-      .then((result) => {
-        setCode("");
-        setDescription("");
-        setsuppliername("");
-        console.log(result.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (onEdit) {
+      axios
+        .put("http://localhost:3000/api/suppliername", {
+          id: onEdit._id,
+          payload: {
+            suppliername,
+            code,
+            description,
+          },
+        })
+        .then(({ data }) => {
+          toast.success(data);
+          getSuppliers();
+        })
+        .catch(({ data }) => toast.error(data));
+    } else {
+      axios
+        .post("http://localhost:3000/api/suppliername", {
+          suppliername,
+          code,
+          description,
+        })
+        .then(({ data }) => {
+          toast.success(data);
+          console.log(data);
+          getSuppliers();
+        })
+        .catch(({ data }) => {
+          toast.error(data);
+        });
+    }
+    setOnEdit(null);
+    setCode(0);
+    setDescription("");
+    setSuppliername("");
   };
+  const handleEdit = (item: any) => {
+    setOnEdit(item);
+  };
+  const handleDelete = async (id: string) => {
+    axios
+      .patch(`http://localhost:3000/api/suppliername`, { id })
+      .then(({ data }) => {
+        toast.success(data);
+        getSuppliers();
+        console.log(data);
+      })
+      .catch(({ data }) => {
+        toast.error(data);
+      });
+
+    setOnEdit(null);
+    setCode(0);
+    setDescription("");
+    setSuppliername("");
+  };
+
+  useEffect(() => {
+    if (onEdit) {
+      setSuppliername(onEdit.suppliername);
+      setCode(onEdit.code);
+      setDescription(onEdit.description);
+    }
+  }, [onEdit]);
+  const getSuppliers = async () => {
+    try {
+      // let res = await axios.get("http://localhost:3000/api/chemicalname");
+      fetch("http://localhost:3000/api/suppliername")
+        .then((res) => res.json())
+        .then((data) => {
+          setSuppliers(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getSuppliers();
+  }, []);
   return (
     <div>
       <body className="antialiased bg-gray-200 text-gray-900 font-sans">
-        <div className="flex items-start h-screen w-full">
+        <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
-            <span className="block w-full text-2xl uppercase font-bold mb-4">
+            <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
               Supplier Name Form
             </span>
             <form className="mb-4">
-              <div className="mb-4 md:w-full">
-                <label className="block text-xl font-semibold mb-1">
+              <div className="mb-0 md:w-full">
+                <label className="block text-xl text-green-800 font-semibold mb-1">
                   Supplier name
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="suppliername"
-                  id="suppliername"
-                  value={suppliername}
+                  name="chemicalname"
+                  id="chemicalname"
                   placeholder="Supplier Name"
+                  value={suppliername}
                   onChange={(e) => {
-                    setsuppliername(e.target.value);
+                    setSuppliername(e.target.value);
                   }}
                 />
               </div>
               <div className="mb-6 md:w-full">
-                <label className="block text-xl font-semibold mb-1">Code</label>
+                <label className="block text-xl text-green-800 font-semibold mb-1">
+                  Code
+                </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="number"
                   name="code"
                   id="code"
+                  onFocus={handleFocus}
                   placeholder="Code"
                   value={code}
                   onChange={(e) => {
-                    setCode(e.target.value);
+                    setCode(Number(e.target.value));
                   }}
                 />
               </div>
               <div className="mb-6 md:w-full">
-                <label className="block text-xl font-semibold mb-1">
+                <label className="block text-xl text-green-800 font-semibold mb-1">
                   Description
                 </label>
                 <input
@@ -94,85 +164,42 @@ export default function Page() {
           </div>
         </div>
 
-        <div className="grid2" style={{ marginTop: "-250px" }}>
+        <div className="grid2">
           <div className="grid-container2">
             <table>
               <thead>
                 <tr className="header2">
                   <th>
-                    Chemical Name<div>Chemical Name</div>
+                    <div>Suppier Name</div>
                   </th>
                   <th>
-                    Code<div>Code</div>
+                    <div>Code</div>
                   </th>
                   <th>
-                    Description<div>Description</div>
+                    <div>Description</div>
                   </th>
                   <th>
-                    Edit<div>Edit</div>
+                    <div>Edit</div>
                   </th>
                   <th>
-                    Delete<div>Delete</div>
+                    <div>Delete</div>
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Suresh Dasari</td>
-                  <td>B.Tech</td>
-                  <td>Chennai</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Rohini Dasari</td>
-                  <td>Msc</td>
-                  <td>Chennai</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Madhav Sai</td>
-                  <td>MBA</td>
-                  <td>Nagpur</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Praveen Kumar</td>
-                  <td>B.Tech</td>
-                  <td>Guntur</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Mahendra Dasari</td>
-                  <td>CA</td>
-                  <td>Chennai</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Nagaraju Dasari</td>
-                  <td>MCA</td>
-                  <td>USA</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Sateesh Alavala</td>
-                  <td>MD</td>
-                  <td>Vizag</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
-                <tr>
-                  <td>Sudheer</td>
-                  <td>B.Tech</td>
-                  <td>Kakinada</td>
-                  <td>Chennai</td>
-                  <td>Hydrogen</td>
-                </tr>
+                {suppliers?.map((item: any, i: any) => (
+                  <tr key={i}>
+                    <td width="30%">{item?.suppliername}</td>
+                    <td width="20%">{item?.code}</td>
+                    <td width="20%">{item?.description}</td>
+                    <td width="10%">
+                      <FaEdit onClick={() => handleEdit(item)} />
+                    </td>
+                    <td width="10%">
+                      <FaTrash onClick={() => handleDelete(item._id)} />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

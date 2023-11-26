@@ -2,45 +2,45 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ChemicalI } from "../types/interface/chemicalName";
+import { CustomerI } from "../types/interface/customerName";
 import { toast } from "react-toastify";
 import { handleFocus } from "../utils/globalFunctions";
 
 export default function Page() {
-  const [chemicalname, setchemicalname] = useState<string>("");
+  const [customername, setCustomername] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [chemicals, setChemicals] = useState<Array<ChemicalI>>([]);
-  const [onEdit, setOnEdit] = useState<ChemicalI | null>(null);
+  const [customers, setCustomers] = useState<Array<CustomerI>>([]);
+  const [onEdit, setOnEdit] = useState<CustomerI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       axios
-        .put("http://localhost:3000/api/chemicalname", {
+        .put("http://localhost:3000/api/customername", {
           id: onEdit._id,
           payload: {
-            chemicalname,
+            customername,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getChemicals();
+          getCustomers();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       axios
-        .post("http://localhost:3000/api/chemicalname", {
-          chemicalname,
+        .post("http://localhost:3000/api/customername", {
+          customername,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getChemicals();
+          getCustomers();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -49,17 +49,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setCustomername("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     axios
-      .patch(`http://localhost:3000/api/chemicalname`, { id })
+      .patch(`http://localhost:3000/api/customername`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getChemicals();
+        getCustomers();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -69,23 +69,23 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setCustomername("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setchemicalname(onEdit.chemicalname);
+      setCustomername(onEdit.customername);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getChemicals = async () => {
+  const getCustomers = async () => {
     try {
-      // let res = await axios.get("http://localhost:3000/api/chemicalname");
-      fetch("http://localhost:3000/api/chemicalname")
+      // let res = await axios.get("http://localhost:3000/api/customername");
+      fetch("http://localhost:3000/api/customername")
         .then((res) => res.json())
         .then((data) => {
-          setChemicals(data);
+          setCustomers(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -93,7 +93,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getChemicals();
+    getCustomers();
   }, []);
   return (
     <div>
@@ -101,22 +101,22 @@ export default function Page() {
         <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
             <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-              Chemical Name Form
+              Customer Name Form
             </span>
             <form className="mb-4">
               <div className="mb-0 md:w-full">
                 <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Chemical name
+                  Customer name
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="chemicalname"
-                  id="chemicalname"
+                  name="customername"
+                  id="customername"
                   placeholder="Chemical Name"
-                  value={chemicalname}
+                  value={customername}
                   onChange={(e) => {
-                    setchemicalname(e.target.value);
+                    setCustomername(e.target.value);
                   }}
                 />
               </div>
@@ -170,7 +170,7 @@ export default function Page() {
               <thead>
                 <tr className="header2">
                   <th>
-                    <div>Chemical Name</div>
+                    <div>Customer Name</div>
                   </th>
                   <th>
                     <div>Code</div>
@@ -187,9 +187,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {chemicals?.map((item: any, i: any) => (
+                {customers?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.chemicalname}</td>
+                    <td width="30%">{item?.customername}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">

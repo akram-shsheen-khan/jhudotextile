@@ -2,45 +2,45 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ChemicalI } from "../types/interface/chemicalName";
+import { PartyI } from "../types/interface/partyName";
 import { toast } from "react-toastify";
 import { handleFocus } from "../utils/globalFunctions";
 
 export default function Page() {
-  const [chemicalname, setchemicalname] = useState<string>("");
+  const [partyname, setPartyName] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [chemicals, setChemicals] = useState<Array<ChemicalI>>([]);
-  const [onEdit, setOnEdit] = useState<ChemicalI | null>(null);
+  const [parties, setParties] = useState<Array<PartyI>>([]);
+  const [onEdit, setOnEdit] = useState<PartyI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       axios
-        .put("http://localhost:3000/api/chemicalname", {
+        .put("http://localhost:3000/api/partyname", {
           id: onEdit._id,
           payload: {
-            chemicalname,
+            partyname,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getChemicals();
+          getParties();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       axios
-        .post("http://localhost:3000/api/chemicalname", {
-          chemicalname,
+        .post("http://localhost:3000/api/partyname", {
+          partyname,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getChemicals();
+          getParties();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -49,17 +49,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setPartyName("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     axios
-      .patch(`http://localhost:3000/api/chemicalname`, { id })
+      .patch(`http://localhost:3000/api/partyname`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getChemicals();
+        getParties();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -69,23 +69,22 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setPartyName("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setchemicalname(onEdit.chemicalname);
+      setPartyName(onEdit.partyname);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getChemicals = async () => {
+  const getParties = async () => {
     try {
-      // let res = await axios.get("http://localhost:3000/api/chemicalname");
-      fetch("http://localhost:3000/api/chemicalname")
+      fetch("http://localhost:3000/api/partyname")
         .then((res) => res.json())
         .then((data) => {
-          setChemicals(data);
+          setParties(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -93,7 +92,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getChemicals();
+    getParties();
   }, []);
   return (
     <div>
@@ -101,22 +100,22 @@ export default function Page() {
         <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
             <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-              Chemical Name Form
+              Party Name Form
             </span>
             <form className="mb-4">
               <div className="mb-0 md:w-full">
                 <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Chemical name
+                  Party name
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="chemicalname"
-                  id="chemicalname"
-                  placeholder="Chemical Name"
-                  value={chemicalname}
+                  name="partyname"
+                  id="partyname"
+                  placeholder="Party Name"
+                  value={partyname}
                   onChange={(e) => {
-                    setchemicalname(e.target.value);
+                    setPartyName(e.target.value);
                   }}
                 />
               </div>
@@ -170,7 +169,7 @@ export default function Page() {
               <thead>
                 <tr className="header2">
                   <th>
-                    <div>Chemical Name</div>
+                    <div>Party Name</div>
                   </th>
                   <th>
                     <div>Code</div>
@@ -187,9 +186,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {chemicals?.map((item: any, i: any) => (
+                {parties?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.chemicalname}</td>
+                    <td width="30%">{item?.partyname}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">

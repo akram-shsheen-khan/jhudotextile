@@ -2,45 +2,45 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ChemicalI } from "../types/interface/chemicalName";
+import { ColorI } from "../types/interface/color";
 import { toast } from "react-toastify";
 import { handleFocus } from "../utils/globalFunctions";
 
 export default function Page() {
-  const [chemicalname, setchemicalname] = useState<string>("");
+  const [color, setColor] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [chemicals, setChemicals] = useState<Array<ChemicalI>>([]);
-  const [onEdit, setOnEdit] = useState<ChemicalI | null>(null);
+  const [colors, setColors] = useState<Array<ColorI>>([]);
+  const [onEdit, setOnEdit] = useState<ColorI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       axios
-        .put("http://localhost:3000/api/chemicalname", {
+        .put("http://localhost:3000/api/color", {
           id: onEdit._id,
           payload: {
-            chemicalname,
+            color,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getChemicals();
+          getColors();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       axios
-        .post("http://localhost:3000/api/chemicalname", {
-          chemicalname,
+        .post("http://localhost:3000/api/color", {
+          color,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getChemicals();
+          getColors();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -49,17 +49,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setColor("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     axios
-      .patch(`http://localhost:3000/api/chemicalname`, { id })
+      .patch(`http://localhost:3000/api/color`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getChemicals();
+        getColors();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -69,23 +69,22 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setchemicalname("");
+    setColor("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setchemicalname(onEdit.chemicalname);
+      setColor(onEdit.color);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getChemicals = async () => {
+  const getColors = async () => {
     try {
-      // let res = await axios.get("http://localhost:3000/api/chemicalname");
-      fetch("http://localhost:3000/api/chemicalname")
+      fetch("http://localhost:3000/api/color")
         .then((res) => res.json())
         .then((data) => {
-          setChemicals(data);
+          setColors(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -93,7 +92,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getChemicals();
+    getColors();
   }, []);
   return (
     <div>
@@ -101,22 +100,22 @@ export default function Page() {
         <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
             <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-              Chemical Name Form
+              Color Form
             </span>
             <form className="mb-4">
               <div className="mb-0 md:w-full">
                 <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Chemical name
+                  Quality
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="chemicalname"
-                  id="chemicalname"
-                  placeholder="Chemical Name"
-                  value={chemicalname}
+                  name="color"
+                  id="color"
+                  placeholder="Color"
+                  value={color}
                   onChange={(e) => {
-                    setchemicalname(e.target.value);
+                    setColor(e.target.value);
                   }}
                 />
               </div>
@@ -170,7 +169,7 @@ export default function Page() {
               <thead>
                 <tr className="header2">
                   <th>
-                    <div>Chemical Name</div>
+                    <div>Color</div>
                   </th>
                   <th>
                     <div>Code</div>
@@ -187,9 +186,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {chemicals?.map((item: any, i: any) => (
+                {colors?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.chemicalname}</td>
+                    <td width="30%">{item?.color}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">

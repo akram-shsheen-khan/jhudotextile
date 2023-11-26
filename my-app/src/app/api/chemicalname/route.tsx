@@ -2,6 +2,7 @@ import { json } from "stream/consumers";
 import { connectToDataBase } from "../../lib/dbconnection";
 import chemicalname from "../../lib/models/chemicalname";
 import { NextResponse } from "next/server";
+
 export async function POST(req: Request, res: NextResponse) {
   // const {} = req.body
   const body = await req.json();
