@@ -1,114 +1,45 @@
 import custom from "./custom.module.css";
 
-import React from "react";
-
-export default function page() {
+export default function Page() {
   return (
-    <div>
-      <h1 style={{ display: "flex", justifyContent: "center" }}>
-        Jhudo Textile
-      </h1>
-
-      <div className="grid2">
-        <div className="grid-container2">
-          <table>
-            <thead>
-              <tr className="header2">
-                <th>
-                  Chemical Name<div>Chemical Name</div>
-                </th>
-                <th>
-                  Education<div>Education</div>
-                </th>
-                <th>
-                  Location<div>Location</div>
-                </th>
-                <th>
-                  Location<div>Location</div>
-                </th>
-                <th>
-                  Chemical Name<div>Chemical Name</div>
-                </th>
-                <th>
-                  Dyes Name<div>Dyes Name</div>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Suresh Dasari</td>
-                <td>B.Tech</td>
-                <td>Chennai</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Rohini Dasari</td>
-                <td>Msc</td>
-                <td>Chennai</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Madhav Sai</td>
-                <td>MBA</td>
-                <td>Nagpur</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Praveen Kumar</td>
-                <td>B.Tech</td>
-                <td>Guntur</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Mahendra Dasari</td>
-                <td>CA</td>
-                <td>Chennai</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Nagaraju Dasari</td>
-                <td>MCA</td>
-                <td>USA</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Sateesh Alavala</td>
-                <td>MD</td>
-                <td>Vizag</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-                <td>Fixing</td>
-              </tr>
-              <tr>
-                <td>Sudheer</td>
-                <td>B.Tech</td>
-                <td>Kakinada</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-              </tr>
-              <tr>
-                <td>Sudheer</td>
-                <td>B.Tech</td>
-                <td>Kakinada</td>
-                <td>Chennai</td>
-                <td>Hydrogen</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div className="bg-cyan-900 flex justify-center items-center h-screen">
+      <h1>Akram Shaheen</h1>
+      <table className="shadow-2xl border-2 border-cyan-200 w-6/12 overflow-hidden">
+        <thead className="text-white">
+          <tr>
+            <th className="py-3 bg-cyan-800 "> Date</th>
+            <th className="py-3 bg-cyan-800 text-white ">Chemical Name</th>
+            <th className="py-3 bg-cyan-800 text-white ">Dyes Name</th>
+            <th className="py-3 bg-cyan-800 text-white">Process</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-cyan-400 cursor-pointer duration-300 hover:bg-cyan-100 hover:scale-105">
+            <td className="py-3 px-6">500</td>
+            <td className="py-3 px-6">1000</td>
+            <td className="py-3 px-6">2200</td>
+            <td className="py-3 px-6">3300</td>
+          </tr>
+          <tr className="bg-cyan-600 cursor-pointer duration-300 hover:bg-cyan-100 hover:scale-105">
+            <td className="py-3 px-6">500</td>
+            <td className="py-3 px-6">1000</td>
+            <td className="py-3 px-6">2200</td>
+            <td className="py-3 px-6">3300</td>
+          </tr>
+          <tr className="bg-cyan-400 cursor-pointer duration-300 hover:bg-cyan-100 hover:scale-105">
+            <td className="py-3 px-6">500</td>
+            <td className="py-3 px-6">1000</td>
+            <td className="py-3 px-6">2200</td>
+            <td className="py-3 px-6">3300</td>
+          </tr>
+          <tr className="bg-cyan-600 cursor-pointer duration-300 hover:bg-cyan-100 hover:scale-105">
+            <td className="py-3 px-6">500</td>
+            <td className="py-3 px-6">1000</td>
+            <td className="py-3 px-6">2200</td>
+            <td className="py-3 px-6">3300</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

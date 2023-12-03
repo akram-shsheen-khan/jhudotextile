@@ -28,7 +28,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/dbconnection.js",
-    "src/app/landpage/page.jsx"
+    "src/app/landpage/page.jsx",
+    "src/app/process"
   ],
   "exclude": ["node_modules"]
 }

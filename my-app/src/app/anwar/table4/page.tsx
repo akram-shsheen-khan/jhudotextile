@@ -39,7 +39,12 @@ const Input = styled.input`
   height: 40px;
 `;
 
-const Label = styled.label``;
+const Label = styled.label`
+  text-align: start;
+  color: red;
+  padding: 3px;
+  font-weight: regular;
+`;
 
 export const Thead = styled.thead``;
 
@@ -118,13 +123,39 @@ export default function Page() {
               </Td>
               <Td>
                 <InputArea>
-                  <Label>Date</Label>
+                  <Label>Process</Label>
                   <Input />
                 </InputArea>
               </Td>
               <Td>
                 <InputArea>
-                  <Label>Date</Label>
+                  <Label>Weight Kg</Label>
+                  <Input />
+                </InputArea>
+              </Td>
+            </Tr>
+            <Tr>
+              <Td>
+                <InputArea>
+                  <Label>H Bleach Cost per Kg</Label>
+                  <Input />
+                </InputArea>
+              </Td>
+              <Td>
+                <InputArea>
+                  <Label>Dyes Cost Per Kg</Label>
+                  <Input />
+                </InputArea>
+              </Td>
+              <Td>
+                <InputArea>
+                  <Label>Dy Chem Cost Per Kg</Label>
+                  <Input />
+                </InputArea>
+              </Td>
+              <Td>
+                <InputArea>
+                  <Label>Total Cost Weight Kg</Label>
                   <Input />
                 </InputArea>
               </Td>

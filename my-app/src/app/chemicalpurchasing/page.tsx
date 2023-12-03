@@ -369,9 +369,9 @@ export default function Page() {
                   <td width="15%">{item?.challanno}</td>
                   <td width="15%">{item?.chemicalname}</td>
                   <td width="15%">{item?.suppliername}</td>
-                  <td width="15%">{item?.quantity}</td>
-                  <td width="15%">{item?.rate}</td>
-                  <td width="10%">{item?.amount}</td>
+                  <td width="15%">{String(item?.quantity)}</td>
+                  <td width="15%">{String(item?.rate)}</td>
+                  <td width="10%">{String(item?.amount)}</td>
                   <td width="5%">
                     <FaEdit onClick={() => handleEdit(item)} />
                   </td>
