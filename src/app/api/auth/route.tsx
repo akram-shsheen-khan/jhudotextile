@@ -1,7 +1,6 @@
 // exports.generateToken = (email, userId, secret, scope) =>
 //   jwt.sign({ email, userId, scope }, secret);
 
-import { json } from "stream/consumers";
 import { connectToDataBase } from "../../lib/dbconnection";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
@@ -54,7 +53,7 @@ export async function POST(req: Request, res: NextResponse) {
           message: "Successfully LogedIn",
         },
       },
-      process.env.DATA_DECRYPTION_KEY
+      process.env.DATA_DECRYPTION_KEY || ""
     );
     return NextResponse.json(
       {

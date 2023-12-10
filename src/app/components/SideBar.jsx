@@ -1,5 +1,5 @@
-'use client'
-import {  useRouter } from "next/navigation.js";
+"use client";
+import { useRouter } from "next/navigation.js";
 import NavLink from "next/link";
 
 //import * as FaIcons from "react-icons/fa";
@@ -57,7 +57,7 @@ const SideBar = ({ children }) => {
   const getMenu = async () => {
     attachToken();
     await privateAPI
-      .post("/menu",{role:getLocalStorege('role')})
+      .post("/menu", { role: getLocalStorege("role") })
       .then(({ data }) => {
         console.log(data);
         setMenu(data.menu);
@@ -132,7 +132,7 @@ const SideBar = ({ children }) => {
       <div className="main-container">
         <motion.div
           animate={{
-            width: isOpen ? "250px": "25px",
+            width: isOpen ? "250px" : "25px",
             transition: {
               duration: 0.5,
               type: "spring",
@@ -142,31 +142,29 @@ const SideBar = ({ children }) => {
           className={`sidebar `}
         >
           <div className="top_section">
-          <div className="bars" >
+            <div className="bars">
               <FaBars onClick={toggle} />
-            </div>  
-   
-          <div className="search">
-            <div className="search_icon">
-              <BiSearch />
             </div>
-            <AnimatePresence>
-              {isOpen && (
-                <motion.input
-                
-                  initial="hidden"
-                  animate="show"
-                  exit="hidden"
-                  variants={inputAnimation}
-                  type="text"
-                  placeholder="Search"
-                />
-              )}
-            </AnimatePresence>
+
+            <div className="search">
+              <div className="search_icon">
+                <BiSearch />
+              </div>
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.input
+                    initial="hidden"
+                    animate="show"
+                    exit="hidden"
+                    variants={inputAnimation}
+                    type="text"
+                    placeholder="Search"
+                  />
+                )}
+              </AnimatePresence>
+            </div>
           </div>
-           
-          </div>
-        
+
           <section className="routes">
             {menu?.map((route, index) => {
               if (
@@ -174,6 +172,7 @@ const SideBar = ({ children }) => {
               ) {
                 return (
                   <SidebarMenu
+                    key={index}
                     setIsOpen={setIsOpen}
                     route={route}
                     subMenu={subMenu?.filter(
@@ -185,10 +184,7 @@ const SideBar = ({ children }) => {
                 );
               } else {
                 return (
-                  <NavLink
-                  href={route?.menu_url || '#'}
-                    key={index}
-                  >
+                  <NavLink href={route?.menu_url || "#"} key={index}>
                     <div className="icon"></div>
                     <AnimatePresence>
                       {isOpen && (
@@ -201,35 +197,46 @@ const SideBar = ({ children }) => {
                         >
                           {route.menu_name}
                         </motion.div>
-                    )} 
+                      )}
                     </AnimatePresence>
                   </NavLink>
                 );
               }
             })}
-           
           </section>
         </motion.div>
-        <div style={{display:"flex",flexDirection:"column",width:"100%"}}>
-        <header style={{padding:"0 .5rem",width:"100%",height:"5rem",background:"rgb(0, 7, 61)",display:'flex',justifyContent:"space-between",alignItems:"center"}}> 
-        <div className="herder-bars" style={{color:'white'}}>
+        <div
+          style={{ display: "flex", flexDirection: "column", width: "100%" }}
+        >
+          <header
+            style={{
+              padding: "0 .5rem",
+              width: "100%",
+              height: "5rem",
+              background: "rgb(0, 7, 61)",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <div className="herder-bars" style={{ color: "white" }}>
               <FaBars onClick={toggle} />
-            </div>  
-            <h1
-            style={{color:"white",fontSize:"1.5rem"}}
-                 
-                >
-                  Akram Shaheen
-                </h1>
+            </div>
+            <h1 style={{ color: "white", fontSize: "1.5rem" }}>
+              Akram Shaheen
+            </h1>
             <Button
               onClick={() => {
-                typeof window != undefined? window.localStorage.clear():false;
+                typeof window != undefined
+                  ? window.localStorage.clear()
+                  : false;
                 navigate.push("/login");
               }}
             >
               Logout
-            </Button></header>
-        <main>{children}</main>
+            </Button>
+          </header>
+          <main>{children}</main>
         </div>
       </div>
     </>

@@ -133,10 +133,6 @@ const Page = () => {
 
   const [tdchamount, setTDCHAmount] = useState<number>(0);
 
-  const [hbcost, setHBCost] = useState<number>(0);
-
-  const [tdyescost, setTDyesCost] = useState<number>(0);
-
   const onFinish = () => {
     if (onEdit) {
       publicAPI
@@ -586,9 +582,7 @@ const Page = () => {
   }, [tdchamount, weightkg]);
 
   useEffect(() => {
-    setTotalCost(
-      Number(hbcost) + Number(tdyescost) + Number(dyeingchemicalcost)
-    );
+    setTotalCost(Number(dyeingchemicalcost));
   }, [halfbleachcost, dyescost, dyeingchemicalcost]);
 
   return (
