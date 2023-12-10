@@ -15,7 +15,7 @@ const withAuth = (Component: any) => {
       (state: any) => state.authReducer.value?.token
     );
     console.log("🚀 ~ file: withAuth.tsx:14 ~ Auth ~ token:", token);
-
+    //alo
     // If user is not logged in, return login component
     useEffect(() => {
       if (!token) {
