@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation.js";
+import { useRouter } from "next/navigation";
 import NavLink from "next/link";
 
 //import * as FaIcons from "react-icons/fa";
