@@ -5,24 +5,22 @@ import Axios from "axios";
 // export const base_url = "https://trackingbackend.herokuapp.com";
 // export const base_url = "http://192.168.100.252:5000";
 // export const base_url = "http://192.168.0.105:8800";
-export const base_url = "http://localhost:3000/api";
+export const base_url = `/api`;
 
 export const publicAPI = Axios.create({ baseURL: base_url });
 
-
-const jwt = getToken()
-const added_data_axios = {
-}
+const jwt = getToken();
+const added_data_publicAPI = {};
 export const privateAPI = Axios.create({
   baseURL: base_url,
   transformRequest: [
     (body = {}) => {
-      return {  ...added_data_axios,...body } 
+      return { ...added_data_publicAPI, ...body };
     },
     ...Axios.defaults.transformRequest,
   ],
   headers: { common: { Authorization: `Bearer ${jwt}` } },
-})
+});
 
 export const attachToken = async () => {
   const jwt = getLocalStorege("token");

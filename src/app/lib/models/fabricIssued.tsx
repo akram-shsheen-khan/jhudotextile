@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const FabricIssuedSchema = new mongoose.Schema({
-  issueddate: {
+  dated: {
     type: String,
     required: true,
   },

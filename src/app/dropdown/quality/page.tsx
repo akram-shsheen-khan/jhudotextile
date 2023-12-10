@@ -1,46 +1,47 @@
 "use client";
-import { publicAPI } from "../../config/constants";
+import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { SupplierI } from "../types/interface/suppliertName";
+import { QualityI } from "../../types/interface/quality";
 import { toast } from "react-toastify";
-import { handleFocus } from "../../utils/globalFunctions";
+import { handleFocus } from "../../../utils/globalFunctions";
+import withAuth from "@/utils/withAuth";
 
-export default function Page() {
-  const [suppliername, setSuppliername] = useState<string>("");
+const Page = () => {
+  const [quality, setQuality] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [suppliers, setSuppliers] = useState<Array<SupplierI>>([]);
-  const [onEdit, setOnEdit] = useState<SupplierI | null>(null);
+  const [qualities, setQualities] = useState<Array<QualityI>>([]);
+  const [onEdit, setOnEdit] = useState<QualityI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/suppliername`, {
+        .put(`/quality`, {
           id: onEdit._id,
           payload: {
-            suppliername,
+            quality,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getSuppliers();
+          getQualities();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/suppliername`, {
-          suppliername,
+        .post(`/quality`, {
+          quality,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getSuppliers();
+          getQualities();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -49,17 +50,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setSuppliername("");
+    setQuality("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/suppliername`, { id })
+      .patch(`/quality`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getSuppliers();
+        getQualities();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -69,24 +70,24 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setSuppliername("");
+    setQuality("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setSuppliername(onEdit.suppliername);
+      setQuality(onEdit.quality);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getSuppliers = async () => {
+  const getQualities = async () => {
     try {
       // let res = await publicAPI.get(`/chemicalname");
       publicAPI
-        .get(`/suppliername`)
+        .get(`/quality`)
 
         .then(({ data }) => {
-          setSuppliers(data);
+          setQualities(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -94,7 +95,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getSuppliers();
+    getQualities();
   }, []);
   return (
     <div>
@@ -102,22 +103,22 @@ export default function Page() {
         <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
             <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-              Supplier Name Form
+              Quality Name Form
             </span>
             <form className="mb-4">
               <div className="mb-0 md:w-full">
                 <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Supplier name
+                  Quality
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="chemicalname"
-                  id="chemicalname"
-                  placeholder="Supplier Name"
-                  value={suppliername}
+                  name="quality"
+                  id="quality"
+                  placeholder="Quality"
+                  value={quality}
                   onChange={(e) => {
-                    setSuppliername(e.target.value);
+                    setQuality(e.target.value);
                   }}
                 />
               </div>
@@ -171,7 +172,7 @@ export default function Page() {
               <thead>
                 <tr className="header2">
                   <th>
-                    <div>Suppier Name</div>
+                    <div>Quality</div>
                   </th>
                   <th>
                     <div>Code</div>
@@ -188,9 +189,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {suppliers?.map((item: any, i: any) => (
+                {qualities?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.suppliername}</td>
+                    <td width="30%">{item?.quality}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">
@@ -208,4 +209,5 @@ export default function Page() {
       </body>
     </div>
   );
-}
+};
+export default withAuth(Page);

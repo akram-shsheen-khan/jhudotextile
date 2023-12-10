@@ -1,46 +1,47 @@
 "use client";
-import { publicAPI } from "../../config/constants";
+import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { SupplierI } from "../types/interface/suppliertName";
+import { PonoI } from "../../types/interface/pono";
 import { toast } from "react-toastify";
-import { handleFocus } from "../../utils/globalFunctions";
+import { handleFocus } from "../../../utils/globalFunctions";
+import withAuth from "@/utils/withAuth";
 
-export default function Page() {
-  const [suppliername, setSuppliername] = useState<string>("");
+const Page = () => {
+  const [pono, setPono] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [suppliers, setSuppliers] = useState<Array<SupplierI>>([]);
-  const [onEdit, setOnEdit] = useState<SupplierI | null>(null);
+  const [ponos, setPonos] = useState<Array<PonoI>>([]);
+  const [onEdit, setOnEdit] = useState<PonoI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/suppliername`, {
+        .put(`/pono`, {
           id: onEdit._id,
           payload: {
-            suppliername,
+            pono,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getSuppliers();
+          getPonos();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/suppliername`, {
-          suppliername,
+        .post(`/pono`, {
+          pono,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getSuppliers();
+          getPonos();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -49,17 +50,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setSuppliername("");
+    setPono("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/suppliername`, { id })
+      .patch(`/pono`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getSuppliers();
+        getPonos();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -69,24 +70,23 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setSuppliername("");
+    setPono("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setSuppliername(onEdit.suppliername);
+      setPono(onEdit.pono);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getSuppliers = async () => {
+  const getPonos = async () => {
     try {
-      // let res = await publicAPI.get(`/chemicalname");
       publicAPI
-        .get(`/suppliername`)
+        .get(`/pono`)
 
         .then(({ data }) => {
-          setSuppliers(data);
+          setPonos(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -94,7 +94,7 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getSuppliers();
+    getPonos();
   }, []);
   return (
     <div>
@@ -102,22 +102,22 @@ export default function Page() {
         <div className="flex items-start">
           <div className="w-full bg-white rounded shadow-lg p-8 m-4 md:max-w-sm md:mx-auto">
             <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-              Supplier Name Form
+              PONO Form
             </span>
             <form className="mb-4">
               <div className="mb-0 md:w-full">
                 <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Supplier name
+                  Pono
                 </label>
                 <input
                   className="w-full border rounded p-2 outline-none focus:shadow-outline"
                   type="text"
-                  name="chemicalname"
-                  id="chemicalname"
-                  placeholder="Supplier Name"
-                  value={suppliername}
+                  name="pono"
+                  id="pono"
+                  placeholder="Pono"
+                  value={pono}
                   onChange={(e) => {
-                    setSuppliername(e.target.value);
+                    setPono(e.target.value);
                   }}
                 />
               </div>
@@ -171,7 +171,7 @@ export default function Page() {
               <thead>
                 <tr className="header2">
                   <th>
-                    <div>Suppier Name</div>
+                    <div>PONO</div>
                   </th>
                   <th>
                     <div>Code</div>
@@ -188,9 +188,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {suppliers?.map((item: any, i: any) => (
+                {ponos?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.suppliername}</td>
+                    <td width="30%">{item?.pono}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">
@@ -208,4 +208,5 @@ export default function Page() {
       </body>
     </div>
   );
-}
+};
+export default withAuth(Page);

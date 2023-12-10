@@ -8,12 +8,9 @@ export const connectToDataBase = async () => {
     return;
   }
   try {
-    await mongoose.connect(
-      "mongodb+srv://shaheenakram754:eGAj5iDkIl4yq8Gu@cluster0.sxpsplg.mongodb.net/?retryWrites=true&w=majority",
-      {
-        dbName: "jhudo_db",
-      }
-    );
+    await mongoose.connect(process.env.mongoURL, {
+      dbName: "jhudo_db",
+    });
     isConnected = true;
   } catch (error) {
     console.log(error);

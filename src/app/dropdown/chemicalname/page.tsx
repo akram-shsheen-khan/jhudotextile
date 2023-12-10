@@ -1,47 +1,47 @@
 "use client";
-
+import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ColorI } from "../types/interface/color";
+import { ChemicalI } from "../../types/interface/chemicalName";
 import { toast } from "react-toastify";
-import { handleFocus } from "../../utils/globalFunctions";
-import { publicAPI } from "@/config/constants";
+import { handleFocus } from "../../../utils/globalFunctions";
+import withAuth from "@/utils/withAuth";
 
-export default function Page() {
-  const [color, setColor] = useState<string>("");
+const Page = () => {
+  const [chemicalname, setchemicalname] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
-  const [colors, setColors] = useState<Array<ColorI>>([]);
-  const [onEdit, setOnEdit] = useState<ColorI | null>(null);
+  const [chemicals, setChemicals] = useState<Array<ChemicalI>>([]);
+  const [onEdit, setOnEdit] = useState<ChemicalI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/color`, {
+        .put(`/chemicalname`, {
           id: onEdit._id,
           payload: {
-            color,
+            chemicalname,
             code,
             description,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getColors();
+          getChemicals();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/color`, {
-          color,
+        .post(`/chemicalname`, {
+          chemicalname,
           code,
           description,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getColors();
+          getChemicals();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -50,17 +50,17 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setColor("");
+    setchemicalname("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/color`, { id })
+      .patch(`/chemicalname`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getColors();
+        getChemicals();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -70,23 +70,24 @@ export default function Page() {
     setOnEdit(null);
     setCode(0);
     setDescription("");
-    setColor("");
+    setchemicalname("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setColor(onEdit.color);
+      setchemicalname(onEdit.chemicalname);
       setCode(onEdit.code);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
-  const getColors = async () => {
+  const getChemicals = async () => {
     try {
+      // let res = await publicAPI.get(`/chemicalname");
       publicAPI
-        .get(`/color`)
+        .get(`/chemicalname`)
 
         .then(({ data }) => {
-          setColors(data);
+          setChemicals(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -94,29 +95,29 @@ export default function Page() {
   };
 
   useEffect(() => {
-    getColors();
+    getChemicals();
   }, []);
   return (
     <div>
       <div className="flex items-start">
-        <div className="w-full bg-white rounded-md shadow-2xl p-8 m-4 md:max-w-sm md:mx-auto">
-          <span className="block w-full text-2xl text-red-800 text-center uppercase font-bold mb-4">
-            Color Form
+        <div className="w-full bg-white rounded shadow-2xl p-8 m-4 md:max-w-sm md:mx-auto">
+          <span className="block w-full h-8 bg-black text-2xl text-white text-center uppercase font-bold mb-4">
+            Chemical Name Form
           </span>
           <form className="mb-4">
             <div className="mb-0 md:w-full">
               <label className="block text-xl text-green-800 font-semibold mb-1">
-                Quality
+                Chemical name
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="text"
-                name="color"
-                id="color"
-                placeholder="Color"
-                value={color}
+                name="chemicalname"
+                id="chemicalname"
+                placeholder="Chemical Name"
+                value={chemicalname}
                 onChange={(e) => {
-                  setColor(e.target.value);
+                  setchemicalname(e.target.value);
                 }}
               />
             </div>
@@ -178,9 +179,9 @@ export default function Page() {
                 </tr>
               </thead>
               <tbody>
-                {colors?.map((item: any, i: any) => (
+                {chemicals?.map((item: any, i: any) => (
                   <tr key={i}>
-                    <td width="30%">{item?.color}</td>
+                    <td width="30%">{item?.chemicalname}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">
@@ -198,4 +199,6 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};
+
+export default withAuth(Page);

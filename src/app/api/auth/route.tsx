@@ -13,48 +13,59 @@ export async function POST(req: Request, res: NextResponse) {
   const body = await req.json();
   console.log("🚀 ~ file: route.js:5 ~ GET ~ equest.body:", body);
   await connectToDataBase();
-  let user:any = await User.find({ username: body.username })
-  user= user[0]
-  function compareAsync(param1:string, param2:string) {
-    return new Promise(function(resolve, reject) {
-        bcrypt.compare(param1, param2, function(err:any, res:any) {
-            console.log("🚀 ~ file: route.tsx:20 ~ bcrypt.compare ~ param1, param2:", param1, param2)
-            if (err) {
-                 reject(err);
-            } else {
-                 resolve(res);
-            }
-        });
+  let user: any = await User.find({ username: body.username });
+  user = user[0];
+  console.log("🚀 ~ file: route.tsx:18 ~ POST ~ user:", user);
+  function compareAsync(param1: string, param2: string) {
+    return new Promise(function (resolve, reject) {
+      bcrypt.compare(param1, param2, function (err: any, res: any) {
+        console.log(
+          "🚀 ~ file: route.tsx:20 ~ bcrypt.compare ~ param1, param2:",
+          param1,
+          param2
+        );
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      });
     });
-}
-const hashedPassword = await  compareAsync(String(body.password), user?.password)
-  console.log("🚀 ~ file: route.tsx:31 ~ POST ~ hashedPassword:", hashedPassword)
+  }
+  const hashedPassword = await compareAsync(
+    String(body.password),
+    user?.password
+  );
+  console.log(
+    "🚀 ~ file: route.tsx:31 ~ POST ~ hashedPassword:",
+    hashedPassword
+  );
   if (!hashedPassword) {
     return NextResponse.json(
       { iserror: true, message: "incorrect Password" },
       { status: 400 }
     );
-    }else {
-        let token = jwt.sign(
-          {
-            data: {
-              username: user?.username,
-              role: user?.role,
-              message: "Successfully LogedIn",
-            },
-          },
-          process.env.DATA_DECRYPTION_KEY
-        );
-       return NextResponse.json({
-          token,
+  } else {
+    let token = jwt.sign(
+      {
+        data: {
           username: user?.username,
           role: user?.role,
-          message: "user Logged In Successfully",
-        },{status:200});
-      }
-   
-      
-  
+          message: "Successfully LogedIn",
+        },
+      },
+      process.env.DATA_DECRYPTION_KEY
+    );
+    return NextResponse.json(
+      {
+        token,
+        username: user?.username,
+        role: user?.role,
+        message: "user Logged In Successfully",
+      },
+      { status: 200 }
+    );
+  }
 }
 
 // Register Controller Start //

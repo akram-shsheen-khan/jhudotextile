@@ -1,6 +1,6 @@
 export interface FabricIssuedI {
   _id: string;
-  issueddate: String;
+  dated: String;
   partyname: String;
   challanno: String;
   pono: String;
