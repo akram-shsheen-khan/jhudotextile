@@ -223,7 +223,7 @@ const SideBar = ({ children }) => {
               <FaBars onClick={toggle} />
             </div>
             <h1 style={{ color: "white", fontSize: "1.5rem" }}>
-              Akram Shaheen
+              JHUDO TEXTILE
             </h1>
             <Button
               onClick={() => {

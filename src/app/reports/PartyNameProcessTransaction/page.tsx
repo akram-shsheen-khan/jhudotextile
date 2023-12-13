@@ -94,10 +94,10 @@ const Page = () => {
 
   return (
     <div>
-      <div className="max-w-screen-md mx-auto p-5">
+      <div className="max-w-screen-md mx-auto bg-slate-100 p-5 shadow-2xl mt-8 mb-10">
         <div className="text-center mb-16">
-          <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
-            Fabric Receiving
+          <p className="mt-4 text-2xl leading-7 text-red-600 font-bold uppercase">
+            Party Name and Process Transaction Report
           </p>
           <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
             JHUDO <span className="text-indigo-600">TEXTILE</span>
@@ -139,11 +139,7 @@ const Page = () => {
                 Party Name
               </label>
               <Select
-                style={{
-                  width: "350px",
-                  height: "48px",
-                  appearance: "none",
-                }}
+                className="appearance-none block bg-gray-200 text-gray-700 border w-full border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg- md:w-[350px] h-11"
                 showSearch
                 placeholder="Select Party Name"
                 value={partyname}
@@ -166,16 +162,12 @@ const Page = () => {
                 }
               />
             </div>
-          </div>
-
-          <div className="flex flex-wrap -mx-3 mb-6">
-            <div className="w-full md:w-1/2 px-3">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                Process
+                End Date
               </label>
-
               <Select
-                style={{ width: "350px", height: "48px" }}
+                className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[350px] h-11"
                 showSearch
                 placeholder="Select a Process"
                 optionFilterProp="children"
@@ -199,6 +191,7 @@ const Page = () => {
               />
             </div>
           </div>
+
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="flex justify-between w-full px-3">
               <button
@@ -213,7 +206,7 @@ const Page = () => {
         </form>
       </div>
 
-      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10">
+      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10 shadow-2xl">
         <div className="h-60 w-full grid gap-2 p-2 grid-cols-2 grid-rows-2">
           <div className="col-span-2 row-span-2 rounded-xl bg-white overflow-auto">
             <table className="table-auto w-full">
