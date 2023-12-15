@@ -93,119 +93,85 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="container mx-auto my-20 max-h-screen max-w-5xl shadow-2xl border border-purple-500 bg-white">
-      <div className="p-5 space-y-5 shadow-xl">
-        <h4 className="text-center text-3xl">JHUDO TEXTILE</h4>
-
-        <form>
-          <div className="max-width-full grid grid-cols-1 gap-5 md:grid-cols-2">
-            <div className="flex flex-col">
-              <div className=" text-left">
-                <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Start Date
-                </label>
-              </div>
-              <div className="text-center">
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="enddate"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  placeholder="Start Date"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className=" text-left">
-                <label className="block text-xl text-green-800 font-semibold mb-1">
-                  End Date
-                </label>
-              </div>
-              <div className="text-center">
-                <input
-                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  id="enddate"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  placeholder="End Date"
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className=" text-left">
-                <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Party Name
-                </label>
-              </div>
-              <div className="text-center">
-                <Select
-                  className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
-                  showSearch
-                  placeholder="Select Party Name"
-                  value={partyname}
-                  optionFilterProp="children"
-                  onChange={onChangePartyName}
-                  filterOption={(input, option) =>
-                    String(option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={
-                    partyNames?.length > 0
-                      ? partyNames.map((party: PartyI) => {
-                          return {
-                            value: party.partyname,
-                            label: party.partyname,
-                          };
-                        })
-                      : []
-                  }
-                />
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <div className=" text-left">
-                <label className="block text-xl text-green-800 font-semibold mb-1">
-                  Process
-                </label>
-              </div>
-              <div className="text-center">
-                <Select
-                  className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
-                  showSearch
-                  placeholder="Select a Process"
-                  optionFilterProp="children"
-                  value={process}
-                  onChange={onChangeProcess}
-                  filterOption={(input, option) =>
-                    String(option?.label ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  options={
-                    processes?.length > 0
-                      ? processes.map((proc: ProcessI) => {
-                          return {
-                            value: proc.process,
-                            label: proc.process,
-                          };
-                        })
-                      : []
-                  }
-                />
-              </div>
-            </div>
-            <div>
-              <button className="bg-red-600 text-white w-44 h-12 border-2 mb-1 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4">
-                Filter
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    <table className="text-left m-4 border-collapse">
+      <thead>
+        <tr>
+          <th className="py-4 px-6 bg-grey-lighter text-cyan-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Chemical Name
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Code
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Opening Stock
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Purchasing
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Total Received
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Half Bleach Chemical
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Dyeing Chemical
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Total Consumption
+          </th>
+          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+            Balance
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Salt</td>
+          <td>1</td>
+          <td>100</td>
+          <td>100</td>
+          <td>200</td>
+          <td>70</td>
+          <td>30</td>
+          <td>100</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>Caustic</td>
+          <td>2</td>
+          <td>200</td>
+          <td>100</td>
+          <td>300</td>
+          <td>150</td>
+          <td>40</td>
+          <td>190</td>
+          <td>110</td>
+        </tr>
+        <tr>
+          <td>Soda Ash</td>
+          <td>3</td>
+          <td>50</td>
+          <td>100</td>
+          <td>150</td>
+          <td>Shaheen1</td>
+          <td>Shaheen2</td>
+          <td>Shaheen3</td>
+          <td>Shaheen4</td>
+        </tr>
+        <tr>
+          <td>Fixing</td>
+          <td>4</td>
+          <td>100</td>
+          <td>100</td>
+          <td>200</td>
+          <td>Shaheen1</td>
+          <td>Shaheen2</td>
+          <td>Shaheen3</td>
+          <td>Shaheen4</td>
+        </tr>
+      </tbody>
+    </table>
   );
 };
 export default withAuth(Home);
