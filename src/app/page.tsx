@@ -96,36 +96,36 @@ const Home = () => {
     <table className="text-left m-4 border-collapse">
       <thead>
         <tr>
-          <th className="py-4 px-6 bg-grey-lighter text-cyan-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Chemical Name
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Code
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Opening Stock
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Purchasing
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Total Received
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Half Bleach Chemical
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Dyeing Chemical
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Total Consumption
           </th>
-          <th className="py-4 px-6 bg-grey-lighter text-red-800 font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
+          <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
             Balance
           </th>
         </tr>
       </thead>
-      <tbody>
+      <tbody className="bg-grey-300">
         <tr>
           <td>Salt</td>
           <td>1</td>
