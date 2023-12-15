@@ -1,99 +1,9 @@
 "use client";
-import { publicAPI } from "./../config/constants";
-import { useEffect, useState } from "react";
-import { FaTrash, FaEdit } from "react-icons/fa";
-import { toast } from "react-toastify";
-import { Select } from "antd";
-// import moment from "moment";
-import { PartyI } from "./types/interface/partyName";
-import { ProcessI } from "./types/interface/process";
-import { TransactionI } from "./types/interface/transaction";
 import withAuth from "@/utils/withAuth";
 
 const Home = () => {
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  const [partyname, setPartyName] = useState<string>("");
-  const [process, setProcess] = useState<string>("");
-  const [transactions, setTransactions] = useState<Array<TransactionI>>([]);
-  const [partyNames, setPartyNames] = useState<Array<PartyI>>([]);
-  const [processes, setProcesses] = useState<Array<ProcessI>>([]);
-  const [transactionarr, setTransactionsArr] = useState([]);
-  useEffect(() => {
-    const tempArr: any = [];
-    transactions.map((item: any, index: any) => {
-      tempArr.push({
-        ...item,
-        balance: index
-          ? item.type === "received"
-            ? tempArr[index - 1].balance + item.receivedweight
-            : tempArr[index - 1].balance - item.deliveredweight
-          : item.type === "received"
-          ? 0 + item.receivedweight
-          : 0 - item.deliveredweight,
-      });
-    });
-    setTransactionsArr(tempArr);
-  }, [transactions]);
-  const onFinish = () => {
-    publicAPI
-      .post(`/reports/PartyNameProcessTransaction`, {
-        startDate,
-        endDate,
-        partyname,
-        process,
-      })
-      .then(({ data }) => {
-        console.log("🚀 ~ file: page.tsx:33 ~ .then ~ data:", data);
-        setTransactions(data);
-      })
-      .catch(({ data }) => {
-        toast.error(data);
-      });
-  };
-
-  const onChangePartyName = (value: string) => {
-    console.log(`selected ${value}`);
-    setPartyName(value);
-  };
-
-  const onChangeProcess = (value: string) => {
-    console.log(`selected ${value}`);
-    setProcess(value);
-  };
-
-  const getPartyNames = async () => {
-    try {
-      publicAPI
-        .get(`/partyname`)
-
-        .then(({ data }) => {
-          setPartyNames(data);
-        });
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
-  const getProcesses = async () => {
-    try {
-      publicAPI
-        .get(`/process`)
-
-        .then(({ data }) => {
-          setProcesses(data);
-        });
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getPartyNames();
-    getProcesses();
-  }, []);
-
   return (
-    <table className="text-left m-4 border-collapse">
+    <table className="text-left px-80 max-w-4xl">
       <thead>
         <tr>
           <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
@@ -125,7 +35,7 @@ const Home = () => {
           </th>
         </tr>
       </thead>
-      <tbody className="bg-grey-300">
+      <tbody>
         <tr>
           <td>Salt</td>
           <td>1</td>

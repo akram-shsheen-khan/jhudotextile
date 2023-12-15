@@ -2,7 +2,8 @@
 import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Select } from "antd";
 // import moment from "moment";
 import { ChemicalI } from "../../types/interface/chemicalName";
@@ -168,7 +169,7 @@ const Page = () => {
   }, [quantity, rate]);
   return (
     <div>
-      <div className="max-w-screen-md mx-auto p-5">
+      <div className="max-w-screen-md mx-auto p-5 shadow-2xl my-6">
         <div className="text-center mb-16">
           <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
             Chemical Purchasing
@@ -325,10 +326,14 @@ const Page = () => {
               </button>
             </div>
           </div>
+          <ToastContainer
+            autoClose={3000}
+            position={toast.POSITION.BOTTOM_LEFT}
+          />
         </form>
       </div>
 
-      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10">
+      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10 shadow-2xl">
         <div className="h-60 w-full grid gap-2 p-2 grid-cols-2 grid-rows-2">
           <div className="col-span-2 row-span-2 rounded-xl bg-white overflow-auto">
             <table className="table-auto w-full">
