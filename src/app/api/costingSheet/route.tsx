@@ -1,14 +1,25 @@
 import { connectToDataBase } from "../../lib/dbconnection";
 import costingSheet from "../../lib/models/costingSheet";
+import hbchemicalconsumption from "../../lib/models/hbchemicalconsumption";
+import dyesNameconsumption from "../../lib/models/dyesnameconsumption";
+import dchemicalconsumption from "../../lib/models/dchemicalconsumption";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request, res: NextResponse) {
   // const {} = req.body
-  const body = await req.json();
-  console.log("🚀 ~ file: route.js:5 ~ GET ~ equest.body:", body);
-  await connectToDataBase();
-  const result = await costingSheet.create(body);
-  return NextResponse.json(result);
+  try {
+    const body = await req.json();
+    console.log("🚀 ~ file: route.js:5 ~ GET ~ equest.body:", body);
+    await connectToDataBase();
+    const result = await costingSheet.create(body?.payload);
+    const result2 = await hbchemicalconsumption.insertMany(body?.HBchemical);
+    const result3 = await dyesNameconsumption.insertMany(body?.dyesName);
+    const result4 = await dchemicalconsumption.insertMany(body?.dyeingChemical);
+
+    return NextResponse.json({ message: "successfully" });
+  } catch (e) {
+    console.log("🚀 ~ file: route.tsx:21 ~ POST ~ e:", e);
+  }
 }
 export async function PUT(req: Request, res: NextResponse) {
   const { id, payload } = await req.json();
