@@ -12,7 +12,7 @@ import { PonoI } from "../../types/interface/pono";
 import { ProcessI } from "../../types/interface/process";
 import { ColorI } from "../../types/interface/color";
 import { CostingSheetI } from "../../types/interface/costingSheet";
-import { handleFocus } from "@/utils/globalFunctions";
+import { handleFocus } from "../../../utils/globalFunctions";
 import { ChemicalI } from "../../types/interface/chemicalName";
 import { DyesI } from "../../types/interface/dyesName";
 import withAuth from "@/utils/withAuth";
@@ -43,9 +43,9 @@ const Page = () => {
   const [onEdit, setOnEdit] = useState<CostingSheetI | null>(null);
 
   const [chemicalname, setChemicalName] = useState<string>("");
-  const [hbquantity1, setHBQuantity1] = useState<number>(0);
-  const [hbrate1, setHBRate1] = useState<number>(0);
-  const [hbamount1, setHBAmount1] = useState<number>(0);
+  const [quantity1, setQuantity1] = useState<number>(0);
+  const [rate1, setRate1] = useState<number>(0);
+  const [amount1, setAmount1] = useState<number>(0);
 
   const [chemicalname2, setChemicalName2] = useState<string>("");
   const [quantity2, setQuantity2] = useState<number>(0);
@@ -127,10 +127,11 @@ const Page = () => {
   const [rate12, setRate12] = useState<number>(0);
   const [amount12, setAmount12] = useState<number>(0);
 
-  const [chemicalname13, setChemicalName13] = useState<string>("");
-  const [quantity13, setQuantity13] = useState<number>(0);
-  const [rate13, setRate13] = useState<number>(0);
-  const [amount13, setAmount13] = useState<number>(0);
+  const [thbamount, setTHBAmount] = useState<number>(0);
+
+  const [tdamount, setTDAmount] = useState<number>(0);
+
+  const [tdchamount, setTDCHAmount] = useState<number>(0);
 
   const onFinish = () => {
     if (onEdit) {
@@ -309,11 +310,6 @@ const Page = () => {
     setChemicalName12(value);
   };
 
-  const onChangeChemical13 = (value: string) => {
-    console.log(`selected ${value}`);
-    setChemicalName13(value);
-  };
-
   const handleDelete = async (id: string) => {
     publicAPI
       .patch(`/costingSheet`, { id })
@@ -474,8 +470,8 @@ const Page = () => {
   }, []);
 
   useEffect(() => {
-    setHBAmount1(Number(hbquantity1) * Number(hbrate1));
-  }, [hbquantity1, hbrate1]);
+    setAmount1(Number(quantity1) * Number(rate1));
+  }, [quantity1, rate1]);
 
   useEffect(() => {
     setAmount2(Number(quantity2) * Number(rate2));
@@ -542,11 +538,55 @@ const Page = () => {
   }, [quantity12, rate12]);
 
   useEffect(() => {
-    setAmount13(Number(quantity13) * Number(rate13));
-  }, [quantity13, rate13]);
+    setTHBAmount(
+      Number(amount1) +
+        Number(amount2) +
+        Number(amount3) +
+        Number(amount4) +
+        Number(amount5)
+    );
+  }, [amount1, amount2, amount3, amount4, amount5]);
+
+  useEffect(() => {
+    setTDAmount(
+      Number(damount1) +
+        Number(damount2) +
+        Number(damount3) +
+        Number(damount4) +
+        Number(damount5)
+    );
+  }, [damount1, damount2, damount3, damount4, damount5]);
+
+  useEffect(() => {
+    setTDCHAmount(
+      Number(amount6) +
+        Number(amount7) +
+        Number(amount8) +
+        Number(amount9) +
+        Number(amount10) +
+        Number(amount11) +
+        Number(amount12)
+    );
+  }, [amount6, amount7, amount8, amount9, amount10, amount11, amount12]);
+
+  useEffect(() => {
+    setHalfBleachCost(Number(thbamount) / Number(weightkg));
+  }, [thbamount, weightkg]);
+
+  useEffect(() => {
+    setDyesCost(Number(tdamount) / Number(weightkg));
+  }, [tdamount, weightkg]);
+
+  useEffect(() => {
+    setDyeingChemicalCost(Number(tdchamount) / Number(weightkg));
+  }, [tdchamount, weightkg]);
+
+  useEffect(() => {
+    setTotalCost(Number(dyeingchemicalcost));
+  }, [halfbleachcost, dyescost, dyeingchemicalcost]);
 
   return (
-    <div className="container max-w-5xl mx-auto">
+    <div className="container max-w-5xl mx-auto shadow-2xl">
       <div
         className="max-width-full text-white 
 grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-3 mt-5"
@@ -660,7 +700,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
           </div>
           <div className="text-center">
             <Select
-              className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+              className="appearance-none block bg-gray-200 w-full text-gray-00 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
               showSearch
               placeholder="Select Quality"
               value={quality}
@@ -755,7 +795,15 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             </label>
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="weightkg"
+              type="number"
+              placeholder="Weight Kg"
+              onFocus={handleFocus}
+              value={weightkg}
+              onChange={(e) => setWeightkg(Number(e.target.value))}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -765,7 +813,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             </label>
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="hbcost"
+              type="number"
+              placeholder="Half Bleach Cost"
+              disabled
+              value={halfbleachcost}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -775,7 +830,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             </label>
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="dyescost"
+              type="number"
+              placeholder="Dyes Cost"
+              disabled
+              value={dyescost}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -785,7 +847,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             </label>
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="dyeingchemicalcost"
+              type="number"
+              placeholder="Dyes Chemical Cost"
+              disabled
+              value={dyeingchemicalcost}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -795,7 +864,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             </label>
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="totalcost"
+              type="number"
+              placeholder="Total Cost"
+              disabled
+              value={totalcost}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -943,8 +1019,8 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
               type="number"
               placeholder="Quantity"
               onFocus={handleFocus}
-              value={hbquantity1}
-              onChange={(e) => setHBQuantity1(Number(e.target.value))}
+              value={quantity1}
+              onChange={(e) => setQuantity1(Number(e.target.value))}
             />
           </div>
           <div className="text-center">
@@ -1005,8 +1081,8 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
               type="number"
               placeholder="Rate"
               onFocus={handleFocus}
-              value={hbrate1}
-              onChange={(e) => setHBRate1(Number(e.target.value))}
+              value={rate1}
+              onChange={(e) => setRate1(Number(e.target.value))}
             />
           </div>
           <div className="text-center">
@@ -1067,7 +1143,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
               type="number"
               placeholder="Amount"
               disabled
-              value={hbamount1}
+              value={amount1}
             />
           </div>
           <div className="text-center">
@@ -1111,7 +1187,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             />
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount5"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={thbamount}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -1422,7 +1505,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             />
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount5"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={tdamount}
+            />
           </div>
         </div>
         <div className="flex flex-col">
@@ -1852,14 +1942,24 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
             />
           </div>
           <div className="text-center">
-            <input className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white" />
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount12"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={tdchamount}
+            />
           </div>
         </div>
         <div
           className="max-width-full text-white 
        grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-3 mt-5"
         >
-          <button className="bg-red-600 w-44 h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4">
+          <button
+            onClick={onFinish}
+            className="bg-red-600 w-44 text-white h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4"
+          >
             Save
           </button>
         </div>
@@ -1867,4 +1967,5 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
     </div>
   );
 };
+
 export default withAuth(Page);
