@@ -27,6 +27,6 @@ export async function PATCH(req: Request, res: NextResponse) {
 }
 export async function GET(req: Request, res: NextResponse) {
   await connectToDataBase();
-  const result: any = await color.find({});
+  const result: any = await color.find({}).sort({ _id: -1 });
   return NextResponse.json(result);
 }

@@ -418,6 +418,7 @@ const Page = () => {
       Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
     );
   }, [halfbleachcost, dyescost, dyeingchemicalcost]);
+
   const changePropertyByIndex = (
     arr: any,
     index: any,
@@ -915,7 +916,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
                   showSearch
                   placeholder="Select a chemical"
-                  value={c?.chemicalname}
+                  value={c?.dyesname}
                   optionFilterProp="children"
                   onChange={(value) =>
                     setDyesName(

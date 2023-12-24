@@ -7,7 +7,6 @@ export interface CostingSheetI {
   quality: String;
   pono: String;
   process: String;
-
   weightkg: Number;
   halfbleachcost: Number;
   dyescost: Number;

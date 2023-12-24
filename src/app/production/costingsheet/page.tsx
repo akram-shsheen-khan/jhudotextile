@@ -1,7 +1,8 @@
 "use client";
+
 import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
-import { FaTrash, FaEdit } from "react-icons/fa";
+import { FaTrash, FaEdit, FaAd, FaPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Select } from "antd";
 // import moment from "moment";
@@ -12,10 +13,12 @@ import { ProcessI } from "../../types/interface/process";
 import { ColorI } from "../../types/interface/color";
 import { CostingSheetI } from "../../types/interface/costingSheet";
 import { handleFocus } from "../../../utils/globalFunctions";
-
-import { Flex } from "antd";
-import styled from "styled-components";
+import { ChemicalI } from "../../types/interface/chemicalName";
+import { DyesI } from "../../types/interface/dyesName";
 import withAuth from "@/utils/withAuth";
+import { HBChemicalI } from "@/app/types/interface/HBChemical";
+import { dyesNameConsumptionI } from "@/app/types/interface/dyesNameConsumption";
+import { DyeingChemicalI } from "@/app/types/interface/DyeingChemical";
 
 const Page = () => {
   const [dyeingdate, setDyeingDate] = useState<string>("");
@@ -38,79 +41,71 @@ const Page = () => {
   const [qualities, setQualities] = useState<Array<QualityI>>([]);
   const [processes, setProcesses] = useState<Array<ProcessI>>([]);
   const [colors, setColors] = useState<Array<ColorI>>([]);
+  const [chemicalNames, setChemicalNames] = useState<Array<ChemicalI>>([]);
+  const [dyesNames, setDyesNames] = useState<Array<DyesI>>([]);
   const [onEdit, setOnEdit] = useState<CostingSheetI | null>(null);
 
-  const FormContainer = styled.form`
-    display: flex;
-    align-items: flex-end;
-    gap: 30px;
-    flex-wrap: wrap;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0px 0px 5px #ccc;
-    border-radius: 5px;
-  `;
+  const [HBchemical, setHBChemical] = useState<Array<HBChemicalI>>([
+    {
+      dyeingdate,
+      lotno,
+      chemicalname: "",
+      quantity: 0,
+      rate: 0,
+      amount: 0,
+    },
+  ]);
+  useEffect(() => {
+    setHBChemical(
+      HBchemical.map((c: any) => ({
+        dyeingdate,
+        lotno,
+        chemicalname: c?.chemicalname,
+        quantity: c?.quantity,
+        rate: c?.rate,
+        amount: c?.amount,
+      }))
+    );
+    setDyesName(
+      dyesName.map((c: any) => ({
+        dyeingdate,
+        lotno,
+        dyesname: c?.dyesname,
+        quantity: c?.quantity,
+        rate: c?.rate,
+        amount: c?.amount,
+      }))
+    );
+    setDyeingChemical(
+      dyeingChemical.map((c: any) => ({
+        dyeingdate,
+        lotno,
+        chemicalname: c?.chemicalname,
+        quantity: c?.quantity,
+        rate: c?.rate,
+        amount: c?.amount,
+      }))
+    );
+  }, [dyeingdate, lotno]);
 
-  const Table = styled.table`
-    width: 700px;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0px 0px 5px #ccc;
-    border-radius: 5px;
-    max-width: 1120px;
-    margin: 20px auto;
-    word-break: break-all;
-  `;
+  const [dyesName, setDyesName] = useState<Array<dyesNameConsumptionI>>([
+    {
+      dyeingdate,
+      lotno,
+      dyesname: "",
+      quantity: 0,
+      rate: 0,
+      amount: 0,
+    },
+  ]);
+  const [dyeingChemical, setDyeingChemical] = useState<Array<DyeingChemicalI>>([
+    { dyeingdate, lotno, chemicalname: "", quantity: 0, rate: 0, amount: 0 },
+  ]);
+  const [thbamount, setTHBAmount] = useState<number>(0);
 
-  const InputArea = styled.div`
-    display: flex;
-    flex-direction: column;
-  `;
+  const [tdamount, setTDAmount] = useState<number>(0);
 
-  const Input = styled.input`
-    width: 160px;
-    padding: 0 10px;
-    box-shadow: 0px 0px 5px #ccc;
-    border: 1px solid #bbb;
-    border-radius: 5px;
-    height: 40px;
-  `;
-
-  const Label = styled.label`
-    text-align: start;
-    color: red;
-    padding: 3px;
-    font-weight: regular;
-  `;
-
-  const Thead = styled.thead``;
-
-  const Tbody = styled.tbody``;
-
-  const Tr = styled.tr``;
-
-  const Th = styled.th`
-    text-align: start;
-    padding: 20px;
-    padding-bottom: 5px;
-    color: red;
-  `;
-
-  const Td = styled.td`
-    padding-top: 15px;
-  `;
-
-  const Button = styled.button`
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
-    border: none;
-    background-color: #2c73d2;
-    color: white;
-    height: 42px;
-    width: 100px;
-    box-shadow: 0px 0px 5px #ccc;
-  `;
+  const [tdchamount, setTDCHAmount] = useState<number>(0);
 
   const onFinish = () => {
     if (onEdit) {
@@ -140,22 +135,57 @@ const Page = () => {
     } else {
       publicAPI
         .post(`/costingSheet`, {
-          dyeingdate,
-          lotno,
-          partyname,
-          color,
-          quality,
-          pono,
-          process,
-          weightkg,
-          halfbleachcost,
-          dyescost,
-          dyeingchemicalcost,
-          totalcost,
+          payload: {
+            dyeingdate,
+            lotno,
+            partyname,
+            color,
+            quality,
+            pono,
+            process,
+            weightkg,
+            halfbleachcost,
+            dyescost,
+            dyeingchemicalcost,
+            totalcost,
+          },
+          HBchemical: HBchemical[0].chemicalname == "" ? [] : HBchemical,
+          dyesName: dyesName[0].dyesname == "" ? [] : dyesName,
+          dyeingChemical:
+            dyeingChemical[0].chemicalname == "" ? [] : dyeingChemical,
         })
         .then(({ data }) => {
           getCostingSheet();
-
+          setHBChemical([
+            {
+              dyeingdate,
+              lotno,
+              chemicalname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
+          setDyesName([
+            {
+              dyeingdate,
+              lotno,
+              dyesname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
+          setDyeingChemical([
+            {
+              dyeingdate,
+              lotno,
+              chemicalname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
           toast.success(data);
           console.log(data);
         })
@@ -177,9 +207,7 @@ const Page = () => {
     setDyeingChemicalCost(0);
     setTotalCost(0);
   };
-  const handleEdit = (item: CostingSheetI) => {
-    setOnEdit(item);
-  };
+
   const onChangePartyName = (value: string) => {
     console.log(`selected ${value}`);
     setPartyName(value);
@@ -202,33 +230,6 @@ const Page = () => {
   const onChangePono = (value: string) => {
     console.log(`selected ${value}`);
     setPono(value);
-  };
-  const handleDelete = async (id: string) => {
-    publicAPI
-      .patch(`/costingSheet`, { id })
-      .then(({ data }) => {
-        getCostingSheet();
-
-        toast.success(data);
-        console.log(data);
-      })
-      .catch(({ data }) => {
-        toast.error(data);
-      });
-
-    setOnEdit(null);
-    setDyeingDate("");
-    setLotNo("");
-    setPartyName("");
-    setColor("");
-    setQuality("");
-    setPono("");
-    setProcess("");
-    setWeightkg(0);
-    setHalfBleachCost(0);
-    setDyesCost(0);
-    setDyeingChemicalCost(0);
-    setTotalCost(0);
   };
 
   useEffect(() => {
@@ -324,6 +325,66 @@ const Page = () => {
       toast.error(error);
     }
   };
+  const handleAddHBChemical = () => {
+    console.log("--------------->");
+    setHBChemical([
+      ...HBchemical,
+      { dyeingdate, lotno, chemicalname: "", quantity: 0, rate: 0, amount: 0 },
+    ]);
+  };
+  const handleAddDyeingChemical = () => {
+    console.log("--------------->");
+    setDyeingChemical([
+      ...dyeingChemical,
+      {
+        dyeingdate,
+        lotno,
+        chemicalname: "",
+        quantity: 0,
+        rate: 0,
+        amount: 0,
+      },
+    ]);
+  };
+  const handleAddDyes = () => {
+    console.log("--------------->");
+    setDyesName([
+      ...dyesName,
+      {
+        dyeingdate,
+        lotno,
+        dyesname: "",
+        quantity: 0,
+        rate: 0,
+        amount: 0,
+      },
+    ]);
+  };
+  const getChemicals = async () => {
+    try {
+      publicAPI
+        .get(`/chemicalname`)
+
+        .then(({ data }) => {
+          setChemicalNames(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+
+  const getDyess = async () => {
+    try {
+      publicAPI
+        .get(`/dyesname`)
+
+        .then(({ data }) => {
+          setDyesNames(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
 
   useEffect(() => {
     getCostingSheet();
@@ -332,588 +393,808 @@ const Page = () => {
     getProcesses();
     getQualities();
     getColors();
+    getChemicals();
+    getDyess();
   }, []);
 
+  useEffect(() => {
+    setHalfBleachCost(
+      Number((Number(thbamount) / Number(weightkg)).toFixed(2))
+    );
+  }, [thbamount, weightkg]);
+
+  useEffect(() => {
+    setDyesCost(Number((Number(tdamount) / Number(weightkg)).toFixed(2)));
+  }, [tdamount, weightkg]);
+
+  useEffect(() => {
+    setDyeingChemicalCost(
+      Number((Number(tdchamount) / Number(weightkg)).toFixed(2))
+    );
+  }, [tdchamount, weightkg]);
+
+  useEffect(() => {
+    setTotalCost(
+      Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
+    );
+  }, [halfbleachcost, dyescost, dyeingchemicalcost]);
+
+  const changePropertyByIndex = (
+    arr: any,
+    index: any,
+    propertyName: any,
+    newValue: any
+  ) => {
+    if (index >= 0 && index < arr.length) {
+      // Create a new object with the updated property
+      const updatedObject = {
+        ...arr[index],
+        [propertyName]: newValue,
+        amount:
+          propertyName == "quantity"
+            ? newValue * arr[index]?.rate
+            : propertyName == "rate"
+            ? newValue * arr[index]?.quantity
+            : arr[index]?.quantity * arr[index]?.rate,
+      };
+
+      // Create a new array with the updated object at the same position
+      const newArray = [
+        ...arr.slice(0, index),
+        updatedObject,
+        ...arr.slice(index + 1),
+      ];
+
+      return newArray;
+    }
+
+    // If the index is out of bounds, return the original array
+    return arr;
+  };
+  useEffect(() => {
+    setTHBAmount(HBchemical.reduce((a: any, b: any) => a + b.amount, 0));
+  }, [HBchemical]);
+  useEffect(() => {
+    setTDAmount(dyesName.reduce((a: any, b: any) => a + b.amount, 0));
+  }, [dyesName]);
+  useEffect(() => {
+    setTDCHAmount(dyeingChemical.reduce((a: any, b: any) => a + b.amount, 0));
+  }, [dyeingChemical]);
+
   return (
-    <>
-      <FormContainer>
-        <Table>
-          <Thead></Thead>
-          <Tbody>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Label>Date</Label>
-                  <Input
-                    id="dyeingdate"
-                    type="date"
-                    value={dyeingdate}
-                    onChange={(e) => setDyeingDate(e.target.value)}
-                    placeholder="Date"
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Lot No</Label>
-                  <Input
-                    id="lotno"
-                    type="text"
-                    value={lotno}
-                    onChange={(e) => setLotNo(e.target.value)}
-                    placeholder="Lot No"
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Party Name</Label>
-                  <Select
-                    showSearch
-                    placeholder="Select Party Name"
-                    value={partyname}
-                    optionFilterProp="children"
-                    onChange={onChangePartyName}
-                    filterOption={(input, option) =>
-                      String(option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={
-                      partyNames?.length > 0
-                        ? partyNames.map((party: PartyI) => {
-                            return {
-                              value: party.partyname,
-                              label: party.partyname,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Color</Label>
-                  <Select
-                    showSearch
-                    placeholder="Select a Color"
-                    optionFilterProp="children"
-                    value={color}
-                    onChange={onChangeColor}
-                    filterOption={(input, option) =>
-                      String(option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={
-                      colors?.length > 0
-                        ? colors.map((colo: ColorI) => {
-                            return {
-                              value: colo.color,
-                              label: colo.color,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Label>Quality</Label>
-                  <Select
-                    showSearch
-                    placeholder="Select Quality"
-                    value={quality}
-                    optionFilterProp="children"
-                    onChange={onChangeQuality}
-                    filterOption={(input, option) =>
-                      String(option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={
-                      qualities?.length > 0
-                        ? qualities.map((qual: QualityI) => {
-                            return {
-                              value: qual.quality,
-                              label: qual.quality,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Po No</Label>
-                  <Select
-                    showSearch
-                    placeholder="Select PO NO"
-                    optionFilterProp="children"
-                    value={pono}
-                    onChange={onChangePono}
-                    filterOption={(input, option) =>
-                      String(option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={
-                      ponos?.length > 0
-                        ? ponos.map((pon: PonoI) => {
-                            return {
-                              value: pon.pono,
-                              label: pon.pono,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Process</Label>
-                  <Select
-                    showSearch
-                    placeholder="Select a Process"
-                    optionFilterProp="children"
-                    value={process}
-                    onChange={onChangeProcess}
-                    filterOption={(input, option) =>
-                      String(option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={
-                      processes?.length > 0
-                        ? processes.map((proc: ProcessI) => {
-                            return {
-                              value: proc.process,
-                              label: proc.process,
-                            };
-                          })
-                        : []
-                    }
-                  />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Weight Kg</Label>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Label>H Bleach Cost per Kg</Label>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Dyes Cost Per Kg</Label>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Dy Chem Cost Per Kg</Label>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Label>Total Cost Weight Kg</Label>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>H B Chemical Name</Th>
-              <Th>Quantity</Th>
-              <Th>Rate</Th>
-              <Th>Amount</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Dyes Name</Th>
-              <Th>Quantity</Th>
-              <Th>Rate</Th>
-              <Th>Amount</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-        <Table>
-          <Thead>
-            <Tr>
-              <Th>Dyeing Chemical Name</Th>
-              <Th>Quantity</Th>
-              <Th>Rate</Th>
-              <Th>Amount</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-            <Tr>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-              <Td>
-                <InputArea>
-                  <Input />
-                </InputArea>
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-        <Table>
-          <Td>
-            <InputArea>
-              <Button>Save</Button>
-            </InputArea>
-          </Td>
-        </Table>
-      </FormContainer>
-    </>
+    <div className="container max-w-5xl mx-auto shadow-2xl">
+      <div
+        className="max-width-full text-white 
+grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-3 mt-5"
+      >
+        <div className="bg-green-800 py-5 text-center col-span-full text-white">
+          JHUDO TEXTILE INDUSTRIES
+        </div>
+        <div className="flex flex-col">
+          <div className=" text-left">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Date
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="dyeingdate"
+              type="date"
+              value={dyeingdate}
+              onChange={(e) => setDyeingDate(e.target.value)}
+              placeholder="Date"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className=" text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Lot No
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="lotno"
+              type="text"
+              value={lotno}
+              onChange={(e) => setLotNo(e.target.value)}
+              placeholder="Lot No"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Party Name
+            </label>
+          </div>
+          <div className="text-center">
+            <Select
+              className="appearance-none block bg-gray-200 text-gray-700 border w-full border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg- md:w-[225px] h-11"
+              showSearch
+              placeholder="Select Party Name"
+              value={partyname}
+              optionFilterProp="children"
+              onChange={onChangePartyName}
+              filterOption={(input, option) =>
+                String(option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={
+                partyNames?.length > 0
+                  ? partyNames.map((party: PartyI) => {
+                      return {
+                        value: party.partyname,
+                        label: party.partyname,
+                      };
+                    })
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Color
+            </label>
+          </div>
+          <div className="text-center">
+            <Select
+              className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+              showSearch
+              placeholder="Select a Color"
+              optionFilterProp="children"
+              value={color}
+              onChange={onChangeColor}
+              filterOption={(input, option) =>
+                String(option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={
+                colors?.length > 0
+                  ? colors.map((colo: ColorI) => {
+                      return {
+                        value: colo.color,
+                        label: colo.color,
+                      };
+                    })
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Quality
+            </label>
+          </div>
+          <div className="text-center">
+            <Select
+              className="appearance-none block bg-gray-200 w-full text-gray-00 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+              showSearch
+              placeholder="Select Quality"
+              value={quality}
+              optionFilterProp="children"
+              onChange={onChangeQuality}
+              filterOption={(input, option) =>
+                String(option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={
+                qualities?.length > 0
+                  ? qualities.map((qual: QualityI) => {
+                      return {
+                        value: qual.quality,
+                        label: qual.quality,
+                      };
+                    })
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              PN NO
+            </label>
+          </div>
+          <div className="text-center">
+            <Select
+              className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+              showSearch
+              placeholder="Select PO NO"
+              optionFilterProp="children"
+              value={pono}
+              onChange={onChangePono}
+              filterOption={(input, option) =>
+                String(option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={
+                ponos?.length > 0
+                  ? ponos.map((pon: PonoI) => {
+                      return {
+                        value: pon.pono,
+                        label: pon.pono,
+                      };
+                    })
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Process
+            </label>
+          </div>
+          <div className="text-center">
+            <Select
+              className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+              showSearch
+              placeholder="Select a Process"
+              optionFilterProp="children"
+              value={process}
+              onChange={onChangeProcess}
+              filterOption={(input, option) =>
+                String(option?.label ?? "")
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+              options={
+                processes?.length > 0
+                  ? processes.map((proc: ProcessI) => {
+                      return {
+                        value: proc.process,
+                        label: proc.process,
+                      };
+                    })
+                  : []
+              }
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Weight Kg
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="weightkg"
+              type="number"
+              placeholder="Weight Kg"
+              onFocus={handleFocus}
+              value={weightkg}
+              onChange={(e) => setWeightkg(Number(e.target.value))}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Half Bleach Cost
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="hbcost"
+              type="number"
+              placeholder="Half Bleach Cost"
+              disabled
+              value={halfbleachcost}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Dyes Cost
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="dyescost"
+              type="number"
+              placeholder="Dyes Cost"
+              disabled
+              value={dyescost}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Dyeing Chemical Cost
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="dyeingchemicalcost"
+              type="number"
+              placeholder="Dyes Chemical Cost"
+              disabled
+              value={dyeingchemicalcost}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <div className="text-center">
+            <label className="block text-xl text-green-800 font-semibold mb-1">
+              Total Cost Per Kg
+            </label>
+          </div>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="totalcost"
+              type="number"
+              placeholder="Total Cost"
+              disabled
+              value={totalcost?.toFixed(2)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col md:mx-[50px] sm:mx-6 mx-3">
+        {HBchemical.map((c: any, i: any) => (
+          <div
+            key={i}
+            className="max-width-full text-white 
+          grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5"
+          >
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    HB Chemical Name
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <Select
+                  className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+                  showSearch
+                  placeholder="Select a chemical"
+                  value={c?.chemicalname}
+                  optionFilterProp="children"
+                  onChange={(value) =>
+                    setHBChemical(
+                      changePropertyByIndex(
+                        HBchemical,
+                        i,
+                        "chemicalname",
+                        value
+                      )
+                    )
+                  }
+                  filterOption={(input, option) =>
+                    String(option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={
+                    chemicalNames?.length > 0
+                      ? chemicalNames.map((chemical: ChemicalI, i) => {
+                          return {
+                            key: i,
+                            value: chemical.chemicalname,
+                            label: chemical.chemicalname,
+                          };
+                        })
+                      : []
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Quantity
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="dquantity1"
+                  type="number"
+                  onFocus={handleFocus}
+                  value={c?.quantity}
+                  onChange={(e) =>
+                    setHBChemical(
+                      changePropertyByIndex(
+                        HBchemical,
+                        i,
+                        "quantity",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Rate
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="rate"
+                  type="number"
+                  placeholder="Rate"
+                  onFocus={handleFocus}
+                  value={c?.rate}
+                  onChange={(e) =>
+                    setHBChemical(
+                      changePropertyByIndex(
+                        HBchemical,
+                        i,
+                        "rate",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Amount
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="amount"
+                  type="number"
+                  placeholder="Amount"
+                  disabled
+                  value={c?.amount}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="flex justify-between   lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5">
+          <button onClick={handleAddHBChemical}>
+            <FaPlus className="text-white bg-blue-700 rounded w-15 h-15 "></FaPlus>
+          </button>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={thbamount?.toFixed(2)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col md:mx-[50px] sm:mx-6 mx-3">
+        {dyesName.map((c: any, i: any) => (
+          <div
+            key={i}
+            className="max-width-full text-white 
+          grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5"
+          >
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Dyes Name
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <Select
+                  className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+                  showSearch
+                  placeholder="Select a chemical"
+                  value={c?.chemicalname}
+                  optionFilterProp="children"
+                  onChange={(value) =>
+                    setDyesName(
+                      changePropertyByIndex(dyesName, i, "dyesname", value)
+                    )
+                  }
+                  filterOption={(input, option) =>
+                    String(option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={
+                    dyesNames?.length > 0
+                      ? dyesNames.map((dye: DyesI) => {
+                          return {
+                            value: dye.dyesname,
+                            label: dye.dyesname,
+                          };
+                        })
+                      : []
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Quantity
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="dquantity1"
+                  type="number"
+                  onFocus={handleFocus}
+                  value={c?.quantity}
+                  onChange={(e) =>
+                    setDyesName(
+                      changePropertyByIndex(
+                        dyesName,
+                        i,
+                        "quantity",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Rate
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="rate"
+                  type="number"
+                  placeholder="Rate"
+                  onFocus={handleFocus}
+                  value={c?.rate}
+                  onChange={(e) =>
+                    setDyesName(
+                      changePropertyByIndex(
+                        dyesName,
+                        i,
+                        "rate",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Amount
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="amount"
+                  type="number"
+                  placeholder="Amount"
+                  disabled
+                  value={c?.amount}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="flex justify-between   lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5">
+          <button onClick={handleAddDyes}>
+            <FaPlus className="text-white bg-blue-700 rounded w-15 h-15 "></FaPlus>
+          </button>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={tdamount?.toFixed(2)}
+            />
+          </div>
+        </div>
+      </div>
+      <div className="flex flex-col md:mx-[50px] sm:mx-6 mx-3">
+        {dyeingChemical.map((c: any, i: any) => (
+          <div
+            key={i}
+            className="max-width-full text-white 
+          grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5"
+          >
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Dying Chemical Name
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <Select
+                  className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
+                  showSearch
+                  placeholder="Select a chemical"
+                  value={c?.chemicalname}
+                  optionFilterProp="children"
+                  onChange={(value) =>
+                    setDyeingChemical(
+                      changePropertyByIndex(
+                        dyeingChemical,
+                        i,
+                        "chemicalname",
+                        value
+                      )
+                    )
+                  }
+                  filterOption={(input, option) =>
+                    String(option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                  options={
+                    chemicalNames?.length > 0
+                      ? chemicalNames.map((chemical: ChemicalI, i) => {
+                          return {
+                            key: i,
+                            value: chemical.chemicalname,
+                            label: chemical.chemicalname,
+                          };
+                        })
+                      : []
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Quantity
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="dquantity1"
+                  type="number"
+                  onFocus={handleFocus}
+                  value={c?.quantity}
+                  onChange={(e) =>
+                    setDyeingChemical(
+                      changePropertyByIndex(
+                        dyeingChemical,
+                        i,
+                        "quantity",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Rate
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="rate"
+                  type="number"
+                  placeholder="Rate"
+                  onFocus={handleFocus}
+                  value={c?.rate}
+                  onChange={(e) =>
+                    setDyeingChemical(
+                      changePropertyByIndex(
+                        dyeingChemical,
+                        i,
+                        "rate",
+                        Number(e.target.value)
+                      )
+                    )
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-center">
+                {i == 0 && (
+                  <label className="block text-xl text-green-800 font-semibold mb-1">
+                    Amount
+                  </label>
+                )}
+              </div>
+              <div className="text-center">
+                <input
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  id="amount"
+                  type="number"
+                  placeholder="Amount"
+                  disabled
+                  value={c?.amount}
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+        <div className="flex justify-between   lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2  mt-5">
+          <button onClick={handleAddDyeingChemical}>
+            <FaPlus className="text-white bg-blue-700 rounded w-15 h-15 "></FaPlus>
+          </button>
+          <div className="text-center">
+            <input
+              className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+              id="amount"
+              type="number"
+              placeholder="Amount"
+              disabled
+              value={tdchamount?.toFixed(2)}
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div
+          className="max-width-full text-white 
+       grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-3 mt-5"
+        >
+          <button
+            onClick={onFinish}
+            className="bg-red-600 w-44 text-white h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4"
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
+
 export default withAuth(Page);
