@@ -2,13 +2,17 @@ import mongoose from "mongoose";
 
 /* ChemicalNameSchema will correspond to the recipe collection in the MongoDB database. */
 const ChemicalNameSchema = new mongoose.Schema({
+  chemicalname: {
+    type: String,
+    required: true,
+  },
   code: {
     type: Number,
     required: true,
     unique: true,
   },
-  chemicalname: {
-    type: String,
+  rate: {
+    type: Number,
     required: true,
   },
   description: {

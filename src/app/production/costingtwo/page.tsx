@@ -315,16 +315,15 @@ const Page = () => {
 
   const getColors = async () => {
     try {
-      publicAPI
-        .get(`/color`)
-
-        .then(({ data }) => {
-          setColors(data);
-        });
-    } catch (error: any) {
-      toast.error(error);
+      const response = await publicAPI.get(`/color`);
+      const { data } = response;
+      setColors(data);
+    } catch (error) {
+      console.error("Error fetching colors:", error);
+      toast.error("Error fetching colors");
     }
   };
+
   const handleAddHBChemical = () => {
     console.log("--------------->");
     setHBChemical([

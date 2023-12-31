@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 /* ChemicalNameSchema will correspond to the recipe collection in the MongoDB database. */
-const StockSchema = new mongoose.Schema({
+const DyesStockSchema = new mongoose.Schema({
   date: {
     type: String,
     required: true,
@@ -11,7 +11,7 @@ const StockSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  chemicalname: {
+  dyesname: {
     type: String,
     required: true,
   },
@@ -21,4 +21,5 @@ const StockSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.models.Stock || mongoose.model("Stock", StockSchema);
+export default mongoose.models.DyesStock ||
+  mongoose.model("DyesStock", DyesStockSchema);

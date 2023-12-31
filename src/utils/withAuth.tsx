@@ -22,9 +22,9 @@ const withAuth = (Component: any) => {
         Navigate.push("/login");
       }
       if (token && pathName == "/login") {
-        Navigate.push("/");
+        window.location.reload();
       }
-    }, []);
+    }, [token]);
 
     // If user is logged in, return original component
     return (

@@ -1,9 +1,42 @@
 "use client";
+import { publicAPI } from "@/config/constants";
 import withAuth from "@/utils/withAuth";
+import { DatePicker } from "antd";
+import moment from "moment";
 
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 const Home = () => {
+  const [sheetData, setSheetData] = useState<any>([]);
+  const [month, setMonth] = useState(moment().get("month") + 1);
+  const [year, setYear] = useState<Number>(moment().get("year"));
+
+  const getDyesStock = async () => {
+    try {
+      publicAPI
+        .post(`/stock/dyeStockReport`, { month, year })
+        .then(({ data }) => {
+          setSheetData(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+  useEffect(() => {
+    getDyesStock();
+  }, [month, year]);
+
   return (
     <div className="max-w-[1200px] mr-10">
+      <DatePicker
+        picker="month"
+        onChange={(_: any, valueStr: string) => {
+          const dateSplit = valueStr.split("-");
+          console.log("🚀 ~ file: page.tsx:33 ~ Home ~ dateSplit:", dateSplit);
+          setMonth(Number(dateSplit[1]));
+          setYear(Number(dateSplit[0]));
+        }}
+      />
       <table className="mr-10">
         <thead>
           <tr>
@@ -25,49 +58,25 @@ const Home = () => {
             <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
               Dyes Consumption
             </th>
-
             <th className="py-4 px-6 bg-grey-lighter bg-red-700 text-white font-sans font-medium uppercase text-sm text-grey border-b border-grey-light">
               Balance
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Salt</td>
-            <td>1</td>
-            <td>100</td>
-            <td>100</td>
-            <td>200</td>
-            <td>70</td>
-            <td>130</td>
-          </tr>
-          <tr>
-            <td>Caustic</td>
-            <td>2</td>
-            <td>200</td>
-            <td>100</td>
-            <td>300</td>
-            <td>150</td>
-            <td>150</td>
-          </tr>
-          <tr>
-            <td>Soda Ash</td>
-            <td>3</td>
-            <td>50</td>
-            <td>100</td>
-            <td>150</td>
-            <td>50</td>
-            <td>100</td>
-          </tr>
-          <tr>
-            <td>Fixing</td>
-            <td>4</td>
-            <td>100</td>
-            <td>100</td>
-            <td>200</td>
-            <td>150</td>
-            <td>50</td>
-          </tr>
+          {sheetData?.map((data: any) => {
+            return (
+              <tr key={data?._id}>
+                <td>{data.dyesname}</td>
+                <td>{data?.code}</td>
+                <td>{data?.openingStock}</td>
+                <td>{data?.totalPurchasing}</td>
+                <td>{data?.totalReceived}</td>
+                <td>{data?.DCtotal}</td>
+                <td>{data?.balance}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

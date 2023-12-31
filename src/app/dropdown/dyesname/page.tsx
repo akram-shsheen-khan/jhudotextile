@@ -10,6 +10,7 @@ import withAuth from "@/utils/withAuth";
 const Page = () => {
   const [dyesname, setDyesName] = useState<string>("");
   const [code, setCode] = useState<number>(0);
+  const [rate, setRate] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
 
   const [dyess, setDyess] = useState<Array<DyesI>>([]);
@@ -23,6 +24,7 @@ const Page = () => {
           payload: {
             dyesname,
             code,
+            rate,
             description,
           },
         })
@@ -36,6 +38,7 @@ const Page = () => {
         .post(`/dyesname`, {
           dyesname,
           code,
+          rate,
           description,
         })
         .then(({ data }) => {
@@ -49,6 +52,7 @@ const Page = () => {
     }
     setOnEdit(null);
     setCode(0);
+    setRate(0);
     setDescription("");
     setDyesName("");
   };
@@ -69,6 +73,7 @@ const Page = () => {
 
     setOnEdit(null);
     setCode(0);
+    setRate(0);
     setDescription("");
     setDyesName("");
   };
@@ -77,6 +82,7 @@ const Page = () => {
     if (onEdit) {
       setDyesName(onEdit.dyesname);
       setCode(onEdit.code);
+      setRate(onEdit.rate);
       setDescription(onEdit.description);
     }
   }, [onEdit]);
@@ -140,6 +146,23 @@ const Page = () => {
             </div>
             <div className="mb-6 md:w-full">
               <label className="block text-xl text-green-800 font-semibold mb-1">
+                Rate
+              </label>
+              <input
+                className="w-full border rounded p-2 outline-none focus:shadow-outline"
+                type="number"
+                name="rate"
+                id="rate"
+                onFocus={handleFocus}
+                placeholder="Rate"
+                value={rate}
+                onChange={(e) => {
+                  setRate(Number(e.target.value));
+                }}
+              />
+            </div>
+            <div className="mb-6 md:w-full">
+              <label className="block text-xl text-green-800 font-semibold mb-1">
                 Description
               </label>
               <input
@@ -173,6 +196,7 @@ const Page = () => {
                 <tr>
                   <th className="bg-red-700 text-white py-4">Dyes Name</th>
                   <th className="bg-red-700 text-white py-4">Code</th>
+                  <th className="bg-red-700 text-white py-4">Rate</th>
                   <th className="bg-red-700 text-white py-4">Description</th>
                   <th className="bg-red-700 text-white py-4">Edit</th>
                   <th className="bg-red-700 text-white py-4">Delete</th>
@@ -183,6 +207,7 @@ const Page = () => {
                   <tr key={i}>
                     <td width="30%">{item?.dyesname}</td>
                     <td width="20%">{item?.code}</td>
+                    <td width="20%">{item?.rate}</td>
                     <td width="20%">{item?.description}</td>
                     <td width="10%">
                       <FaEdit onClick={() => handleEdit(item)} />

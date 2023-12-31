@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import styled from "styled-components";
 import Form from "./Form";
 import Grid from "./Grid";
@@ -44,8 +44,19 @@ function Page() {
     <>
       <Container>
         <Title>Users</Title>
-        <Form onEdit={onEdit} setOnEdit={setOnEdit} getUsers={getUsers} roles={roles} />
-        <Grid setOnEdit={setOnEdit} users={users} setUsers={setUsers} getUsers={getUsers} />
+        <Form
+          onEdit={onEdit}
+          setOnEdit={setOnEdit}
+          getUsers={getUsers}
+          roles={roles}
+        />
+        <Grid
+          setOnEdit={setOnEdit}
+          users={users}
+          setUsers={setUsers}
+          getUsers={getUsers}
+          roles={roles}
+        />
       </Container>
       <ToastContainer autoClose={3000} position={toast.POSITION.BOTTOM_LEFT} />
     </>

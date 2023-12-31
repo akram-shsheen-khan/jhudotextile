@@ -1,17 +1,16 @@
 import { json } from "stream/consumers";
 import { connectToDataBase } from "../../../lib/dbconnection";
-import stock from "../../../lib/models/stock";
+import stock from "../../../lib/models/DyesStock";
 import { NextResponse } from "next/server";
-import dchemicalconsumption from "@/app/lib/models/dchemicalconsumption";
-import hbchemicalconsumption from "@/app/lib/models/hbchemicalconsumption";
-import chemicalPurchasing from "@/app/lib/models/chemicalPurchasing";
-import chemicalame from "@/app/lib/models/chemicalname";
+import dyesnameconsumption from "@/app/lib/models/dyesnameconsumption";
+import dyesPurchasing from "@/app/lib/models/dyesPurchasing";
+import dyesname from "@/app/lib/models/dyesname";
 
 export async function POST(req: Request, res: NextResponse) {
   // const {} = req.body
   const { year, month } = await req.json();
   await connectToDataBase();
-  const dcCemicalConsumptionStock = await dchemicalconsumption.aggregate([
+  const DyesConsumptionStock = await dyesnameconsumption.aggregate([
     {
       $match: {
         dyeingdate: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
@@ -19,25 +18,13 @@ export async function POST(req: Request, res: NextResponse) {
     },
     {
       $group: {
-        _id: "$chemicalname",
-        totalChemicalDyingQTY: { $sum: "$quantity" },
+        _id: "$dyesname",
+        totalDyesDyingQTY: { $sum: "$quantity" },
       },
     },
   ]);
-  const hbCemicalConsumptionStock = await hbchemicalconsumption.aggregate([
-    {
-      $match: {
-        dyeingdate: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
-      },
-    },
-    {
-      $group: {
-        _id: "$chemicalname",
-        totalChemicalHBQTY: { $sum: "$quantity" },
-      },
-    },
-  ]);
-  const ChemicalPurchasingStock = await chemicalPurchasing.aggregate([
+
+  const DyesPurchasingStock = await dyesPurchasing.aggregate([
     {
       $match: {
         date: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
@@ -45,8 +32,8 @@ export async function POST(req: Request, res: NextResponse) {
     },
     {
       $group: {
-        _id: "$chemicalname",
-        totalChemicalPurchasingQTY: { $sum: "$quantity" },
+        _id: "$dyesname",
+        totalDyesPurchasingQTY: { $sum: "$quantity" },
       },
     },
   ]);
@@ -59,46 +46,43 @@ export async function POST(req: Request, res: NextResponse) {
     },
     {
       $group: {
-        _id: "$chemicalname",
+        _id: "$dyesname",
         totalStock: { $sum: "$quantity" },
       },
     },
   ]);
-  const chemicals = await chemicalame.find({});
+  const dyess = await dyesname.find({});
 
-  const chanicalSheetData = chemicals.map((chemical: any) => {
+  const chanicalSheetData = dyess.map((dyes: any) => {
     const stockData = stockResult.find(
-      (stock: any) => stock._id === chemical.chemicalname
+      (stock: any) => stock._id === dyes.dyesname
     );
+
     const totalStock = stockData ? stockData.totalStock : 0;
-    const purchasingData = ChemicalPurchasingStock.find(
-      (stock: any) => stock._id === chemical.chemicalname
+    const purchasingData = DyesPurchasingStock.find(
+      (stock: any) => stock._id === dyes.dyesname
     );
+
     const totalPurchasing = purchasingData
-      ? purchasingData.totalChemicalPurchasingQTY
+      ? purchasingData.totalDyesPurchasingQTY
       : 0;
-    const HBData = hbCemicalConsumptionStock.find(
-      (stock: any) => stock._id === chemical.chemicalname
+
+    const DyingData = DyesConsumptionStock.find(
+      (stock: any) => stock._id === dyes.dyesname
     );
-    const totalHB = HBData ? HBData.totalChemicalHBQTY : 0;
-    const DyingData = dcCemicalConsumptionStock.find(
-      (stock: any) => stock._id === chemical.chemicalname
-    );
-    const DCtotal = DyingData ? DyingData.totalChemicalDyingQTY : 0;
+
+    const DCtotal = DyingData ? DyingData.totalDyesDyingQTY : 0;
 
     const totalReceived = totalStock + totalPurchasing;
-    const totalChemicalConsumption = DCtotal + totalHB;
-    const balance = totalReceived - totalChemicalConsumption;
+    const balance = totalReceived - DCtotal;
     return {
-      chemicalname: chemical.chemicalname,
-      _id: chemical._id,
-      code: chemical.code,
+      dyesname: dyes.dyesname,
+      _id: dyes._id,
+      code: dyes.code,
       openingStock: totalStock,
       totalPurchasing,
       totalReceived,
-      totalHB,
       DCtotal,
-      totalChemicalConsumption,
       balance,
     };
   });

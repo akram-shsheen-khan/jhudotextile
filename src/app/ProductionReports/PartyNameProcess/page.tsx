@@ -68,7 +68,37 @@ const Page = () => {
     // AutoTable function to generate the table
     autoTable(pdf, {
       head: [headers],
-      body: data,
+      body: [
+        ...data,
+        [
+          "",
+          "",
+          "",
+          "",
+          "",
+          "",
+          "Total",
+          costingSheet?.reduce((a: any, b: any) => a + b.weightkg, 0),
+          (
+            costingSheet?.reduce((a: any, b: any) => a + b.halfbleachcost, 0) /
+            costingSheet.length
+          ).toFixed(2),
+          (
+            costingSheet?.reduce((a: any, b: any) => a + b.dyescost, 0) /
+            costingSheet.length
+          ).toFixed(2),
+          (
+            costingSheet?.reduce(
+              (a: any, b: any) => a + b.dyeingchemicalcost,
+              0
+            ) / costingSheet.length
+          ).toFixed(2),
+          (
+            costingSheet?.reduce((a: any, b: any) => a + b.totalcost, 0) /
+            costingSheet.length
+          ).toFixed(2),
+        ],
+      ],
       startY: 50, // Adjust the starting Y position as needed
     });
 
@@ -101,7 +131,7 @@ const Page = () => {
     setPartyName(value);
   };
 
-  const onChangeColor = (value: string) => {
+  const onChangeProcess = (value: string) => {
     console.log(`selected ${value}`);
     setProcess(value);
   };
@@ -118,7 +148,7 @@ const Page = () => {
       toast.error(error);
     }
   };
-  const getColors = async () => {
+  const getProcesses = async () => {
     try {
       publicAPI
         .get(`/process`)
@@ -133,7 +163,7 @@ const Page = () => {
 
   useEffect(() => {
     getPartyNames();
-    getColors();
+    getProcesses();
   }, []);
 
   return (
@@ -216,7 +246,7 @@ const Page = () => {
                 placeholder="Select a Process"
                 optionFilterProp="children"
                 value={process}
-                onChange={onChangeColor}
+                onChange={onChangeProcess}
                 filterOption={(input, option) =>
                   String(option?.label ?? "")
                     .toLowerCase()

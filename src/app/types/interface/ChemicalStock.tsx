@@ -1,4 +1,4 @@
-export interface StockI {
+export interface ChemiclStockI {
   _id: string;
   date: string;
   code: number;

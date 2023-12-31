@@ -6,6 +6,7 @@ const RoleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  id: Number,
 });
 
 export default mongoose.models.Role || mongoose.model("Role", RoleSchema);

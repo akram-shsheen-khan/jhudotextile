@@ -6,18 +6,16 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request, res: NextResponse) {
   // const {} = req.body
   const body = await req.json();
-  console.log("🚀 ~ file: route.tsx:9 ~ POST ~ body:", body);
+  console.log("🚀 ~ file: route.tsx:9 PartyNameProcess ~ POST ~ body:", body);
 
   await connectToDataBase();
-
   const result = await costingSheet
     .find({
       dyeingdate: { $gte: body?.startDate, $lte: body?.endDate },
-      partyname: body?.partyname,
-      color: body?.color,
+
+      process: body?.process,
     })
     .sort({ dated: 1 });
-  console.log("🚀 ~ file: route.tsx:20 ~ POST ~ result:", result);
-
+  console.log("🚀 ~ file: route.tsx:18 ~ POST ~ result:", result);
   return NextResponse.json(result);
 }

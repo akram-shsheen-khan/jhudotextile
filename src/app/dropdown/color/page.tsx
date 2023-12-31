@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ColorI } from "../types/interface/color";
+import { ColorI } from "@/app/types/interface/color";
 import { toast } from "react-toastify";
-import { handleFocus } from "../../utils/globalFunctions";
+import { handleFocus } from "../../../utils/globalFunctions";
 import { publicAPI } from "@/config/constants";
+import withAuth from "@/utils/withAuth";
 
-export default function Page() {
+const Page = () => {
   const [color, setColor] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [description, setDescription] = useState<string>("");
@@ -198,4 +199,6 @@ export default function Page() {
       </div>
     </div>
   );
-}
+};
+
+export default withAuth(Page);

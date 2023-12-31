@@ -14,7 +14,6 @@ export async function POST(req: Request, res: NextResponse) {
     .find({
       dyeingdate: { $gte: body?.startDate, $lte: body?.endDate },
       partyname: body?.partyname,
-      color: body?.color,
     })
     .sort({ dated: 1 });
   console.log("🚀 ~ file: route.tsx:20 ~ POST ~ result:", result);

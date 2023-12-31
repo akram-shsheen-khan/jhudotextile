@@ -10,11 +10,14 @@ const Home = () => {
   const [sheetData, setSheetData] = useState<any>([]);
   const [month, setMonth] = useState(moment().get("month") + 1);
   const [year, setYear] = useState<Number>(moment().get("year"));
+
   const getChemicalStock = async () => {
     try {
-      publicAPI.post(`/stock/stockReport`, { month, year }).then(({ data }) => {
-        setSheetData(data);
-      });
+      publicAPI
+        .post(`/stock/chemicalstockReport`, { month, year })
+        .then(({ data }) => {
+          setSheetData(data);
+        });
     } catch (error: any) {
       toast.error(error);
     }
@@ -22,6 +25,7 @@ const Home = () => {
   useEffect(() => {
     getChemicalStock();
   }, [month, year]);
+
   return (
     <div className="max-w-[1200px] mr-10">
       <DatePicker

@@ -1,6 +1,6 @@
 import { json } from "stream/consumers";
 import { connectToDataBase } from "../../../lib/dbconnection";
-import stock from "../../../lib/models/stock";
+import stock from "../../../lib/models/ChemicalStock";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request, res: NextResponse) {

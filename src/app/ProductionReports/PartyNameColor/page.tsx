@@ -7,7 +7,7 @@ import { Select } from "antd";
 // import moment from "moment";
 import { PartyI } from "../../types/interface/partyName";
 import { ColorI } from "../../types/interface/color";
-import { TransactionI } from "../../types/interface/transaction";
+
 import withAuth from "@/utils/withAuth";
 import { CostingSheetI } from "@/app/types/interface/costingSheet";
 import jsPDF from "jspdf";
@@ -18,6 +18,7 @@ const Page = () => {
   const [endDate, setEndDate] = useState<string>("");
   const [partyname, setPartyName] = useState<string>("");
   const [color, setColor] = useState<string>("");
+
   const [costingSheet, setCostingSheet] = useState<Array<CostingSheetI>>([]);
   const [partyNames, setPartyNames] = useState<Array<PartyI>>([]);
   const [colors, setColors] = useState<Array<ColorI>>([]);
@@ -88,7 +89,8 @@ const Page = () => {
         color,
       })
       .then(({ data }) => {
-        console.log("🚀 ~ file: page.tsx:33 ~ .then ~ data:", data);
+        console.log("🚀 ~ file: page.tsx:92 ~ .then ~ data:", data);
+
         setCostingSheet(data);
       })
       .catch(({ data }) => {
@@ -156,7 +158,7 @@ const Page = () => {
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                id="enddate"
+                id="startdate"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}

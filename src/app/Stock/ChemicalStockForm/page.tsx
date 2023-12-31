@@ -2,69 +2,95 @@
 import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { ChemicalI } from "../../types/interface/chemicalName";
+import { ChemiclStockI } from "../../types/interface/ChemicalStock";
 import { toast } from "react-toastify";
 import { handleFocus } from "../../../utils/globalFunctions";
 import withAuth from "@/utils/withAuth";
+import { ChemicalI } from "@/app/types/interface/chemicalName";
+import { Select } from "antd";
 
 const Page = () => {
-  const [chemicalname, setchemicalname] = useState<string>("");
+  const [date, setDate] = useState<string>("");
   const [code, setCode] = useState<number>(0);
-  const [rate, setRate] = useState<number>(0);
-  const [description, setDescription] = useState<string>("");
+  const [quantity, setQuantity] = useState<Number>(0);
+  const [chemicalNames, setChemicalNames] = useState<Array<ChemicalI>>([]);
+  const [chemicalname, setChemicalName] = useState<string>("");
+  const [chemicalStock, setChemicalStock] = useState<Array<ChemiclStockI>>([]);
+  const [onEdit, setOnEdit] = useState<ChemiclStockI | null>(null);
 
-  const [chemicals, setChemicals] = useState<Array<ChemicalI>>([]);
-  const [onEdit, setOnEdit] = useState<ChemicalI | null>(null);
+  const getChemicals = async () => {
+    try {
+      publicAPI
+        .get(`/chemicalname`)
 
+        .then(({ data }) => {
+          setChemicalNames(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+  const getChemicalStock = async () => {
+    try {
+      publicAPI
+        .get(`/stock/chemicalstockForm`)
+
+        .then(({ data }) => {
+          setChemicalStock(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/chemicalname`, {
+        .put(`/stock/chemicalstockForm`, {
           id: onEdit._id,
           payload: {
+            date,
             chemicalname,
             code,
-            description,
-            rate,
+            quantity,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getChemicals();
+          getChemicalStock();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/chemicalname`, {
+        .post(`/stock/chemicalstockForm`, {
+          date,
           chemicalname,
           code,
-          description,
-          rate,
+          quantity,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getChemicals();
+          getChemicalStock();
         })
         .catch(({ data }) => {
           toast.error(data);
         });
     }
     setOnEdit(null);
+    setDate("");
     setCode(0);
-    setRate(0);
-    setDescription("");
-    setchemicalname("");
+    setQuantity(0);
+    setChemicalName("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/chemicalname`, { id })
+      .patch(`/stock/chemicalstockForm`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getChemicals();
+        getChemicalStock();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -72,108 +98,100 @@ const Page = () => {
       });
 
     setOnEdit(null);
+    setDate("");
     setCode(0);
-    setRate(0);
-    setDescription("");
-    setchemicalname("");
+    setQuantity(0);
+    setChemicalName("");
   };
 
   useEffect(() => {
     if (onEdit) {
-      setchemicalname(onEdit.chemicalname);
+      setDate(onEdit.date);
+      setChemicalName(onEdit.chemicalname);
       setCode(onEdit.code);
-      setRate(onEdit.rate);
-      setDescription(onEdit.description);
+      setQuantity(onEdit.quantity);
     }
   }, [onEdit]);
-  const getChemicals = async () => {
-    try {
-      // let res = await publicAPI.get(`/chemicalname");
-      publicAPI
-        .get(`/chemicalname`)
-
-        .then(({ data }) => {
-          setChemicals(data);
-        });
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
 
   useEffect(() => {
     getChemicals();
+    getChemicalStock();
   }, []);
+  const onChangeChemical = (value: string) => {
+    console.log(`selected ${value}`);
+    setChemicalName(value);
+
+    const selectedChemical = chemicalNames.find(
+      (chemical) => chemical.chemicalname === value
+    );
+
+    setCode(Number(selectedChemical?.code));
+  };
   return (
     <div>
       <div className="flex items-start">
         <div className="w-full bg-white rounded shadow-2xl p-8 m-4 md:max-w-sm md:mx-auto">
           <span className="block w-full h-8 bg-black text-2xl text-white text-center uppercase font-bold mb-4">
-            Chemical Name Form
+            Stock Entry Form
           </span>
           <form className="mb-4">
+            <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
+              <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                Date
+              </label>
+              <input
+                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                id="date"
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                placeholder="Date"
+              />
+            </div>
             <div className="mb-0 md:w-full">
               <label className="block text-xl text-green-800 font-semibold mb-1">
                 Chemical name
               </label>
-              <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text"
-                name="chemicalname"
-                id="chemicalname"
-                placeholder="Chemical Name"
+              <Select
+                className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-4 leading-tight focus:outline-none focus:bg-green-100 md:w-[350px] h-11"
+                showSearch
+                placeholder="Select a chemical"
                 value={chemicalname}
-                onChange={(e) => {
-                  setchemicalname(e.target.value);
-                }}
+                optionFilterProp="children"
+                onChange={onChangeChemical}
+                filterOption={(input, option) =>
+                  String(option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                options={
+                  chemicalNames?.length > 0
+                    ? chemicalNames.map((chemical: ChemicalI, idx: Number) => {
+                        return {
+                          key: idx,
+                          value: chemical.chemicalname,
+                          label: chemical.chemicalname,
+                        };
+                      })
+                    : []
+                }
               />
             </div>
+
             <div className="mb-6 md:w-full">
               <label className="block text-xl text-green-800 font-semibold mb-1">
-                Code
+                Quantity
               </label>
               <input
                 className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                 type="number"
-                name="code"
-                id="code"
-                onFocus={handleFocus}
-                placeholder="Code"
-                value={code}
-                onChange={(e) => {
-                  setCode(Number(e.target.value));
-                }}
-              />
-            </div>
-            <div className="mb-6 md:w-full">
-              <label className="block text-xl text-green-800 font-semibold mb-1">
-                Rate
-              </label>
-              <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="number"
-                name="rate"
-                id="rate"
-                onFocus={handleFocus}
-                placeholder="Rate"
-                value={rate}
-                onChange={(e) => {
-                  setRate(Number(e.target.value));
-                }}
-              />
-            </div>
-            <div className="mb-6 md:w-full">
-              <label className="block text-xl text-green-800 font-semibold mb-1">
-                Description
-              </label>
-              <input
-                className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                type="text"
                 name="description"
-                id="description"
-                placeholder="Description"
-                value={description}
+                id="quantity"
+                onFocus={handleFocus}
+                placeholder="Quantity"
+                value={Number(quantity)}
                 onChange={(e) => {
-                  setDescription(e.target.value);
+                  setQuantity(Number(e.target.value));
                 }}
               />
             </div>
@@ -194,21 +212,21 @@ const Page = () => {
             <table className="table-auto w-full">
               <thead className="sticky top-0 bg-gray-700 text-white">
                 <tr>
+                  <th className="bg-red-700 text-white py-4">Date</th>
                   <th className="bg-red-700 text-white py-4">Chemical Name</th>
                   <th className="bg-red-700 text-white py-4">Code</th>
-                  <th className="bg-red-700 text-white py-4">Rate</th>
-                  <th className="bg-red-700 text-white py-4">Description</th>
+                  <th className="bg-red-700 text-white py-4">Quantity</th>
                   <th className="bg-red-700 text-white py-4">Edit</th>
                   <th className="bg-red-700 text-white py-4">Delete</th>
                 </tr>
               </thead>
               <tbody>
-                {chemicals?.map((item: any, i: any) => (
+                {chemicalStock?.map((item: any, i: any) => (
                   <tr key={i}>
+                    <td width="30%">{item?.date}</td>
                     <td width="30%">{item?.chemicalname}</td>
                     <td width="20%">{item?.code}</td>
-                    <td width="20%">{item?.rate}</td>
-                    <td width="20%">{item?.description}</td>
+                    <td width="20%">{item?.quantity}</td>
                     <td width="10%">
                       <FaEdit onClick={() => handleEdit(item)} />
                     </td>

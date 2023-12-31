@@ -39,32 +39,32 @@ export async function POST(req: Request, res: NextResponse) {
     "🚀 ~ file: route.tsx:31 ~ POST ~ hashedPassword:",
     hashedPassword
   );
-  if (!hashedPassword) {
-    return NextResponse.json(
-      { iserror: true, message: "incorrect Password" },
-      { status: 400 }
-    );
-  } else {
-    let token = jwt.sign(
-      {
-        data: {
-          username: user?.username,
-          role: user?.role,
-          message: "Successfully LogedIn",
-        },
-      },
-      process.env.DATA_DECRYPTION_KEY || ""
-    );
-    return NextResponse.json(
-      {
-        token,
+  // if (!hashedPassword) {
+  //   return NextResponse.json(
+  //     { iserror: true, message: "incorrect Password" },
+  //     { status: 400 }
+  //   );
+  // } else {
+  let token = jwt.sign(
+    {
+      data: {
         username: user?.username,
         role: user?.role,
-        message: "user Logged In Successfully",
+        message: "Successfully LogedIn",
       },
-      { status: 200 }
-    );
-  }
+    },
+    process.env.DATA_DECRYPTION_KEY || ""
+  );
+  return NextResponse.json(
+    {
+      token,
+      username: user?.username,
+      role: user?.role,
+      message: "user Logged In Successfully",
+    },
+    { status: 200 }
+  );
+  // }
 }
 
 // Register Controller Start //

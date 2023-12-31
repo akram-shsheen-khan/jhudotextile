@@ -2,41 +2,41 @@
 import { publicAPI } from "../../../config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { StockI } from "../../types/interface/Stock";
+import { DyesStockI } from "../../types/interface/DyesStock";
 import { toast } from "react-toastify";
 import { handleFocus } from "../../../utils/globalFunctions";
 import withAuth from "@/utils/withAuth";
-import { ChemicalI } from "@/app/types/interface/chemicalName";
+import { DyesI } from "@/app/types/interface/dyesName";
 import { Select } from "antd";
 
 const Page = () => {
   const [date, setDate] = useState<string>("");
   const [code, setCode] = useState<number>(0);
   const [quantity, setQuantity] = useState<Number>(0);
-  const [chemicalNames, setChemicalNames] = useState<Array<ChemicalI>>([]);
-  const [chemicalname, setChemicalName] = useState<string>("");
-  const [chemicalStock, setChemicalStock] = useState<Array<StockI>>([]);
-  const [onEdit, setOnEdit] = useState<StockI | null>(null);
+  const [dyesname, setDyeName] = useState<string>("");
+  const [dyesNames, setDyeNames] = useState<Array<DyesI>>([]);
+  const [dyesStock, setDyeStock] = useState<Array<DyesStockI>>([]);
+  const [onEdit, setOnEdit] = useState<DyesStockI | null>(null);
 
-  const getChemicals = async () => {
+  const getDyes = async () => {
     try {
       publicAPI
-        .get(`/chemicalname`)
+        .get(`/dyesname`)
 
         .then(({ data }) => {
-          setChemicalNames(data);
+          setDyeNames(data);
         });
     } catch (error: any) {
       toast.error(error);
     }
   };
-  const getChemicalStock = async () => {
+  const getDyeStock = async () => {
     try {
       publicAPI
-        .get(`/stock/stockForm`)
+        .get(`/stock/dyesStockForm`)
 
         .then(({ data }) => {
-          setChemicalStock(data);
+          setDyeStock(data);
         });
     } catch (error: any) {
       toast.error(error);
@@ -45,32 +45,32 @@ const Page = () => {
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/stock/stockForm`, {
+        .put(`/stock/dyesStockForm`, {
           id: onEdit._id,
           payload: {
             date,
-            chemicalname,
+            dyesname,
             code,
             quantity,
           },
         })
         .then(({ data }) => {
           toast.success(data);
-          getChemicalStock();
+          getDyeStock();
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/stock/stockForm`, {
+        .post(`/stock/dyesStockForm`, {
           date,
-          chemicalname,
+          dyesname,
           code,
           quantity,
         })
         .then(({ data }) => {
           toast.success(data);
           console.log(data);
-          getChemicalStock();
+          getDyeStock();
         })
         .catch(({ data }) => {
           toast.error(data);
@@ -80,17 +80,17 @@ const Page = () => {
     setDate("");
     setCode(0);
     setQuantity(0);
-    setChemicalName("");
+    setDyeName("");
   };
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/stock/stockForm`, { id })
+      .patch(`/stock/dyesStockForm`, { id })
       .then(({ data }) => {
         toast.success(data);
-        getChemicalStock();
+        getDyeStock();
         console.log(data);
       })
       .catch(({ data }) => {
@@ -101,30 +101,29 @@ const Page = () => {
     setDate("");
     setCode(0);
     setQuantity(0);
-    setChemicalName("");
+    setDyeName("");
   };
 
   useEffect(() => {
     if (onEdit) {
       setDate(onEdit.date);
-      setChemicalName(onEdit.chemicalname);
+      setDyeName(onEdit.dyesname);
       setCode(onEdit.code);
       setQuantity(onEdit.quantity);
     }
   }, [onEdit]);
 
   useEffect(() => {
-    getChemicals();
-    getChemicalStock();
+    getDyes();
+    getDyeStock();
   }, []);
-  const onChangeChemical = (value: string) => {
+  const onChangeDye = (value: string) => {
     console.log(`selected ${value}`);
-    setChemicalName(value);
-    const selectedChemical = chemicalNames.find(
-      (chemical) => chemical.chemicalname === value
-    );
+    setDyeName(value);
 
-    setCode(Number(selectedChemical?.code));
+    const selectedDye = dyesNames.find((dyes) => dyes.dyesname === value);
+
+    setCode(Number(selectedDye?.code));
   };
   return (
     <div>
@@ -149,27 +148,27 @@ const Page = () => {
             </div>
             <div className="mb-0 md:w-full">
               <label className="block text-xl text-green-800 font-semibold mb-1">
-                Chemical name
+                Dye name
               </label>
               <Select
                 className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-4 leading-tight focus:outline-none focus:bg-green-100 md:w-[350px] h-11"
                 showSearch
-                placeholder="Select a chemical"
-                value={chemicalname}
+                placeholder="Select a dyes"
+                value={dyesname}
                 optionFilterProp="children"
-                onChange={onChangeChemical}
+                onChange={onChangeDye}
                 filterOption={(input, option) =>
                   String(option?.label ?? "")
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
                 options={
-                  chemicalNames?.length > 0
-                    ? chemicalNames.map((chemical: ChemicalI, idx: Number) => {
+                  dyesNames?.length > 0
+                    ? dyesNames.map((dyes: DyesI, idx: Number) => {
                         return {
                           key: idx,
-                          value: chemical.chemicalname,
-                          label: chemical.chemicalname,
+                          value: dyes.dyesname,
+                          label: dyes.dyesname,
                         };
                       })
                     : []
@@ -212,7 +211,7 @@ const Page = () => {
               <thead className="sticky top-0 bg-gray-700 text-white">
                 <tr>
                   <th className="bg-red-700 text-white py-4">Date</th>
-                  <th className="bg-red-700 text-white py-4">Chemical Name</th>
+                  <th className="bg-red-700 text-white py-4">Dye Name</th>
                   <th className="bg-red-700 text-white py-4">Code</th>
                   <th className="bg-red-700 text-white py-4">Quantity</th>
                   <th className="bg-red-700 text-white py-4">Edit</th>
@@ -220,10 +219,10 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {chemicalStock?.map((item: any, i: any) => (
+                {dyesStock?.map((item: any, i: any) => (
                   <tr key={i}>
                     <td width="30%">{item?.date}</td>
-                    <td width="30%">{item?.chemicalname}</td>
+                    <td width="30%">{item?.dyesname}</td>
                     <td width="20%">{item?.code}</td>
                     <td width="20%">{item?.quantity}</td>
                     <td width="10%">

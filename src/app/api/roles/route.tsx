@@ -1,6 +1,6 @@
 import { connectToDataBase } from "../../lib/dbconnection";
 import { NextResponse } from "next/server";
-import RolesModel  from "../../lib/models/role"
+import RolesModel from "../../lib/models/role";
 
 export async function GET(req: Request, res: NextResponse) {
   await connectToDataBase();
@@ -15,13 +15,16 @@ export async function GET(req: Request, res: NextResponse) {
 }
 
 export async function POST(req: Request, res: NextResponse) {
-  
   try {
     const body = await req.json();
-    console.log("🚀 ~ file: route.tsx:19 ~ POST ~ body:", body)
+    console.log("🚀 ~ file: route.tsx:19 ~ POST ~ body:", body);
     const { name } = body;
-  await connectToDataBase();
-    const result = await RolesModel.create({ name });
+    await connectToDataBase();
+    const lastId: any = await RolesModel.find({}).limit(1).sort({ _id: -1 });
+    const result = await RolesModel.create({
+      name,
+      id: lastId?.length ? lastId[0].id + 1 : 1,
+    });
     return NextResponse.json(result);
   } catch (error) {
     console.error(error);
@@ -30,8 +33,8 @@ export async function POST(req: Request, res: NextResponse) {
 }
 
 export async function PUT(req: Request, res: NextResponse) {
-    const body = await req.json();
-    console.log("🚀 ~ file: route.tsx:34 ~ PUT ~ body:", body)
+  const body = await req.json();
+  console.log("🚀 ~ file: route.tsx:34 ~ PUT ~ body:", body);
   const { id, name } = body;
 
   await connectToDataBase();
@@ -46,7 +49,7 @@ export async function PUT(req: Request, res: NextResponse) {
 }
 
 export async function PATCH(req: Request, res: NextResponse) {
-    const body = await req.json();
+  const body = await req.json();
   const { id } = body;
 
   await connectToDataBase();
