@@ -2,7 +2,7 @@
 import {  redirect } from "next/navigation";
 import { useSelector } from "react-redux";
 import SideBar from "../app/components/SideBar";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { getToken } from "./globalFunctions";
 const withAuth = (Component: any) => {
   return function Auth (props: any) {
@@ -16,7 +16,7 @@ const withAuth = (Component: any) => {
     console.log("🚀 ~ file: withAuth.tsx:14 ~ Auth ~ token:", token);
     //alo
     // If user is not logged in, return login component
-    useEffect(() => {
+    useLayoutEffect(() => {
       if (!token) {
         redirect("/login");
       }
