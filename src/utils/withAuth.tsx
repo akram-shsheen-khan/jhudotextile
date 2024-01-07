@@ -19,18 +19,17 @@ const withAuth = (Component: any) => {
     console.log("🚀 ~ file: withAuth.tsx:14 ~ Auth ~ token:", token);
     //alo
     // If user is not logged in, return login component
-    // useLayoutEffect(() => {
-    //   if (token) {
-    //     window.location.reload();
-    //   }
-    // }, []);
+    useLayoutEffect(() => {
+      if (!token) {
+        Navigate.push("/login");
+      }
+    }, []);
+    
     if (!token) {
-      Navigate.push("/login");
       return null
     }
     
     if(token){
-
       return (
         <SideBar>
           <Component {...props} />
