@@ -1,12 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Form, Input, Button } from "antd";
 import {publicAPI} from "../../config/constants";
 import {useRouter} from 'next/navigation'
 import { getLocalStorege, getToken } from "@/utils/globalFunctions";
 const SignIn = () => {
+  const token: any = getToken()
+  const Navigate = useRouter();
+  console.log("🚀 ~ file: page.tsx:9 ~ SignIn ~ token:", token)
+ 
   const [loading, setLoading] = useState(false);
-  const navigate = useRouter()
 const authLogin = async(payload:any,setLoading:any) => {
       try {
         const res = await publicAPI.post("/auth", payload);
@@ -25,7 +28,7 @@ const authLogin = async(payload:any,setLoading:any) => {
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("userName", res.data.username);
             localStorage.setItem("role", res.data.role);
-            navigate.push("/");
+            Navigate.push("/");
             // notification.success({
             //   description: res.data.message,
             //   duration: 2,
@@ -47,10 +50,15 @@ const authLogin = async(payload:any,setLoading:any) => {
     setLoading(true);
     await authLogin(values,setLoading)
   };
+  useLayoutEffect(()=>{
+    if (token) {
+      Navigate.push("/");
+  
+    }
+  },[])
 
-  if (getLocalStorege("token")) {
-    navigate.push("/");
-  } else {
+
+ 
   return (
     <>
       <div className="signin">
@@ -97,7 +105,8 @@ const authLogin = async(payload:any,setLoading:any) => {
       </div>
     </>
   );
-  }
+          
+
 };
 
 export default SignIn;
