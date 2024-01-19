@@ -315,15 +315,16 @@ const Page = () => {
 
   const getColors = async () => {
     try {
-      const response = await publicAPI.get(`/color`);
-      const { data } = response;
-      setColors(data);
-    } catch (error) {
-      console.error("Error fetching colors:", error);
-      toast.error("Error fetching colors");
+      publicAPI
+        .get(`/color`)
+
+        .then(({ data }) => {
+          setColors(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
     }
   };
-
   const handleAddHBChemical = () => {
     console.log("--------------->");
     setHBChemical([
@@ -426,17 +427,38 @@ const Page = () => {
   ) => {
     if (index >= 0 && index < arr.length) {
       // Create a new object with the updated property
-      const updatedObject = {
-        ...arr[index],
-        [propertyName]: newValue,
-        amount:
-          propertyName == "quantity"
-            ? newValue * arr[index]?.rate
-            : propertyName == "rate"
-            ? newValue * arr[index]?.quantity
-            : arr[index]?.quantity * arr[index]?.rate,
-      };
+      console.log("🚀 ~ file: page.tsx:428 ~ Page ~ newValue:", newValue);
+      console.log(
+        "🚀 ~ file: page.tsx:432 ~ Page ~",
+        ["chemicalname", "dyesname"].includes(propertyName)
+      );
+      const updatedObject = ["chemicalname", "dyesname"].includes(propertyName)
+        ? {
+            ...arr[index],
+            [propertyName]: newValue.name,
+            rate: newValue.rate,
+            amount:
+              propertyName == "quantity"
+                ? newValue * newValue.rate
+                : propertyName == "rate"
+                ? newValue * arr[index]?.quantity
+                : arr[index]?.quantity * newValue.rate,
+          }
+        : {
+            ...arr[index],
+            [propertyName]: newValue,
+            amount:
+              propertyName == "quantity"
+                ? newValue * arr[index]?.rate
+                : propertyName == "rate"
+                ? newValue * arr[index]?.quantity
+                : arr[index]?.quantity * arr[index]?.rate,
+          };
 
+      console.log(
+        "🚀 ~ file: page.tsx:436 ~ Page ~ updatedObject:",
+        updatedObject
+      );
       // Create a new array with the updated object at the same position
       const newArray = [
         ...arr.slice(0, index),
@@ -772,16 +794,16 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   placeholder="Select a chemical"
                   value={c?.chemicalname}
                   optionFilterProp="children"
-                  onChange={(value) =>
+                  onChange={(value) => {
                     setHBChemical(
-                      changePropertyByIndex(
-                        HBchemical,
-                        i,
-                        "chemicalname",
-                        value
-                      )
-                    )
-                  }
+                      changePropertyByIndex(HBchemical, i, "chemicalname", {
+                        rate: chemicalNames.find(
+                          (chamical) => chamical.chemicalname === value
+                        )?.rate,
+                        name: value,
+                      })
+                    );
+                  }}
                   filterOption={(input, option) =>
                     String(option?.label ?? "")
                       .toLowerCase()
@@ -843,6 +865,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   id="rate"
                   type="number"
                   placeholder="Rate"
+                  disabled
                   onFocus={handleFocus}
                   value={c?.rate}
                   onChange={(e) =>
@@ -915,11 +938,15 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-3 leading-tight focus:outline-none focus:bg-green-100 md:w-[225px] h-11"
                   showSearch
                   placeholder="Select a chemical"
-                  value={c?.chemicalname}
+                  value={c?.dyesname}
                   optionFilterProp="children"
                   onChange={(value) =>
                     setDyesName(
-                      changePropertyByIndex(dyesName, i, "dyesname", value)
+                      changePropertyByIndex(dyesName, i, "dyesname", {
+                        rate: dyesNames.find((dyes) => dyes.dyesname === value)
+                          ?.rate,
+                        name: value,
+                      })
                     )
                   }
                   filterOption={(input, option) =>
@@ -981,6 +1008,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   id="rate"
                   type="number"
+                  disabled
                   placeholder="Rate"
                   onFocus={handleFocus}
                   value={c?.rate}
@@ -1058,12 +1086,12 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   optionFilterProp="children"
                   onChange={(value) =>
                     setDyeingChemical(
-                      changePropertyByIndex(
-                        dyeingChemical,
-                        i,
-                        "chemicalname",
-                        value
-                      )
+                      changePropertyByIndex(dyeingChemical, i, "chemicalname", {
+                        rate: chemicalNames.find(
+                          (chamical) => chamical.chemicalname === value
+                        )?.rate,
+                        name: value,
+                      })
                     )
                   }
                   filterOption={(input, option) =>
@@ -1126,6 +1154,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                   id="rate"
                   type="number"
+                  disabled
                   placeholder="Rate"
                   onFocus={handleFocus}
                   value={c?.rate}

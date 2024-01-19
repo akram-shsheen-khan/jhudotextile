@@ -64,20 +64,49 @@ const Page = () => {
       Number(item?.totalcost),
     ]);
 
-    // AutoTable function to generate the table
-    autoTable(pdf, {
-      head: [headers],
-      body: data,
-      startY: 50, // Adjust the starting Y position as needed
-    });
+   // AutoTable function to generate the table
+   autoTable(pdf, {
+    head: [headers],
+    body: [
+      ...data,
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "Total",
+        costingSheet?.reduce((a: any, b: any) => a + b.weightkg, 0),
+        (
+          costingSheet?.reduce((a: any, b: any) => a + b.halfbleachcost, 0) /
+          costingSheet.length
+        ).toFixed(2),
+        (
+          costingSheet?.reduce((a: any, b: any) => a + b.dyescost, 0) /
+          costingSheet.length
+        ).toFixed(2),
+        (
+          costingSheet?.reduce(
+            (a: any, b: any) => a + b.dyeingchemicalcost,
+            0
+          ) / costingSheet.length
+        ).toFixed(2),
+        (
+          costingSheet?.reduce((a: any, b: any) => a + b.totalcost, 0) /
+          costingSheet.length
+        ).toFixed(2),
+      ],
+    ],
+    startY: 50, // Adjust the starting Y position as needed
+  });
 
-    // Print the PDF
-    pdf.autoPrint();
+  // Print the PDF
+  pdf.autoPrint();
 
-    // Save the PDF
-    pdf.save("report.pdf");
-  };
-
+  // Save the PDF
+  pdf.save("report.pdf");
+};
   const onFinish = () => {
     publicAPI
       .post(`/ProductionReports/PartyName`, {
