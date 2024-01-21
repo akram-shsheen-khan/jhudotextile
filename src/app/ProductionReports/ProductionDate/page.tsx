@@ -1,13 +1,13 @@
 "use client";
 import { publicAPI } from "../../../config/constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
 import { toast } from "react-toastify";
-
+import { Select } from "antd";
 // import moment from "moment";
 
 import withAuth from "@/utils/withAuth";
-import { DyesPurchasingI } from "../../types/interface/dyesPurchasing";
+import { CostingSheetI } from "@/app/types/interface/costingSheet";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -15,9 +15,7 @@ const Page = () => {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
 
-  const [dyesPurchasing, setDyesPurchasing] = useState<Array<DyesPurchasingI>>(
-    []
-  );
+  const [costingSheet, setCostingSheet] = useState<Array<CostingSheetI>>([]);
 
   const generatePDF = () => {
     // Create a new jsPDF instance with landscape orientation
@@ -33,24 +31,34 @@ const Page = () => {
 
     // Add table headers
     const headers = [
-      "Date",
-      "Challan No",
-      "Dyes Name",
-      "Supplier Name",
-      "Quantity",
-      "Rate",
-      "Amount",
+      "Dyeing Date",
+      "Lot No",
+      "Party Name",
+      "Color",
+      "Quality",
+      "PO No",
+      "Process",
+      "Weight (kg)",
+      "Half Bleach Cost",
+      "Dyes Cost",
+      "Dyeing Chemical Cost",
+      "Total Cost",
     ];
 
     // Map the costingSheet data to an array of arrays for the table content
-    const data: any = dyesPurchasing.map((item) => [
-      item?.date,
-      item?.challanno,
-      item?.dyesname,
-      item?.suppliername,
-      Number(item?.quantity),
-      Number(item?.rate),
-      Number(item?.amount),
+    const data: any = costingSheet.map((item) => [
+      item?.dyeingdate,
+      item?.lotno,
+      item?.partyname,
+      item?.color,
+      item?.quality,
+      item?.pono,
+      item?.process,
+      Number(item?.weightkg),
+      Number(item?.halfbleachcost),
+      Number(item?.dyescost),
+      Number(item?.dyeingchemicalcost),
+      Number(item?.totalcost),
     ]);
 
     // AutoTable function to generate the table
@@ -62,16 +70,29 @@ const Page = () => {
           "",
           "",
           "",
-
+          "",
+          "",
+          "",
           "Total",
-          dyesPurchasing?.reduce((a: any, b: any) => a + b.quantity, 0),
+          costingSheet?.reduce((a: any, b: any) => a + b.weightkg, 0),
           (
-            dyesPurchasing?.reduce((a: any, b: any) => a + b.rate, 0) /
-            dyesPurchasing.length
+            costingSheet?.reduce((a: any, b: any) => a + b.halfbleachcost, 0) /
+            costingSheet.length
           ).toFixed(2),
-          dyesPurchasing
-            ?.reduce((a: any, b: any) => a + b.amount, 0)
-            .toFixed(2),
+          (
+            costingSheet?.reduce((a: any, b: any) => a + b.dyescost, 0) /
+            costingSheet.length
+          ).toFixed(2),
+          (
+            costingSheet?.reduce(
+              (a: any, b: any) => a + b.dyeingchemicalcost,
+              0
+            ) / costingSheet.length
+          ).toFixed(2),
+          (
+            costingSheet?.reduce((a: any, b: any) => a + b.totalcost, 0) /
+            costingSheet.length
+          ).toFixed(2),
         ],
       ],
       startY: 50, // Adjust the starting Y position as needed
@@ -85,14 +106,14 @@ const Page = () => {
   };
   const onFinish = () => {
     publicAPI
-      .post(`/PurchasingReports/DyesDate`, {
+      .post(`/ProductionReports/ProductionDate`, {
         startDate,
         endDate,
       })
       .then(({ data }) => {
         console.log("🚀 ~ file: page.tsx:92 ~ .then ~ data:", data);
 
-        setDyesPurchasing(data);
+        setCostingSheet(data);
       })
       .catch(({ data }) => {
         toast.error(data);
@@ -104,7 +125,7 @@ const Page = () => {
       <div className="max-w-screen-md mx-auto bg-slate-100 p-5 shadow-2xl mt-8 mb-10">
         <div className="text-center mb-16">
           <p className="mt-4 text-2xl leading-7 text-red-600 font-bold uppercase">
-            Date Wise Dyes Purchasing Report
+            Date Wise Production Report
           </p>
           <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
             JHUDO <span className="text-indigo-600">TEXTILE</span>
@@ -154,7 +175,7 @@ const Page = () => {
                 onClick={generatePDF}
                 className="shadow bg-indigo-600 hover:bg-indigo-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-6 rounded"
                 type="button"
-                disabled={dyesPurchasing.length ? false : true}
+                disabled={costingSheet.length ? false : true}
               >
                 Print
               </button>
@@ -170,24 +191,38 @@ const Page = () => {
               <thead className="sticky top-0 bg-gray-700 text-white">
                 <tr>
                   <th className="bg-red-700 text-white py-4">Date</th>
-                  <th className="bg-red-700 text-white py-4">Challan No.</th>
-                  <th className="bg-red-700 text-white py-4">Chemical Name</th>
-                  <th className="bg-red-700 text-white py-4">Supplier Name</th>
+                  <th className="bg-red-700 text-white py-4">Lot No.</th>
+                  <th className="bg-red-700 text-white py-4">Party Name</th>
+                  <th className="bg-red-700 text-white py-4">Color</th>
                   <th className="bg-red-700 text-white py-4">Quantity</th>
-                  <th className="bg-red-700 text-white py-4">Rate</th>
-                  <th className="bg-red-700 text-white py-4">Amount</th>
+                  <th className="bg-red-700 text-white py-4">PO No</th>
+                  <th className="bg-red-700 text-white py-4">Process</th>
+                  <th className="bg-red-700 text-white py-4">Weight Kg</th>
+                  <th className="bg-red-700 text-white py-4">
+                    Half Bleach Cost
+                  </th>
+                  <th className="bg-red-700 text-white py-4">Dying Cost</th>
+                  <th className="bg-red-700 text-white py-4">
+                    Dying Chemical Cost
+                  </th>
+                  <th className="bg-red-700 text-white py-4">Total Cost</th>
                 </tr>
               </thead>
               <tbody>
-                {dyesPurchasing?.map((item: DyesPurchasingI) => (
+                {costingSheet?.map((item: CostingSheetI) => (
                   <tr key={item._id}>
-                    <td width="20%">{item?.date}</td>
-                    <td width="20%">{item?.challanno}</td>
-                    <td width="20%">{item?.dyesname}</td>
-                    <td width="20%">{item?.suppliername}</td>
-                    <td width="20%">{Number(item?.quantity)}</td>
-                    <td width="20%">{Number(item?.rate)}</td>
-                    <td width="20%">{Number(item?.amount)}</td>
+                    <td width="20%">{item?.dyeingdate}</td>
+                    <td width="20%">{item?.lotno}</td>
+                    <td width="20%">{item?.partyname}</td>
+                    <td width="20%">{item?.color}</td>
+                    <td width="20%">{item?.quality}</td>
+                    <td width="20%">{item?.pono}</td>
+                    <td width="20%">{item?.process}</td>
+                    <td width="20%">{Number(item?.weightkg)}</td>
+                    <td width="20%">{Number(item?.halfbleachcost)}</td>
+                    <td width="20%">{Number(item?.dyescost)}</td>
+                    <td width="20%">{Number(item?.dyeingchemicalcost)}</td>
+                    <td width="20%">{Number(item?.totalcost)}</td>
                   </tr>
                 ))}
               </tbody>

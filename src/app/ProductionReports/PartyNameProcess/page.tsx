@@ -7,7 +7,7 @@ import { Select } from "antd";
 // import moment from "moment";
 import { PartyI } from "../../types/interface/partyName";
 import { ProcessI } from "../../types/interface/process";
-import { TransactionI } from "../../types/interface/transaction";
+
 import withAuth from "@/utils/withAuth";
 import { CostingSheetI } from "@/app/types/interface/costingSheet";
 import jsPDF from "jspdf";
