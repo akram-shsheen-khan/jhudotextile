@@ -85,7 +85,7 @@ const Page = () => {
   };
   const onFinish = () => {
     publicAPI
-      .post(`/PurchasingReports/Date`, {
+      .post(`/PurchasingReports/ChemicalDate`, {
         startDate,
         endDate,
       })
