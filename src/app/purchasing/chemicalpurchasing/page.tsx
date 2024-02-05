@@ -165,7 +165,8 @@ const Page = () => {
     getSuppliers();
   }, []);
   useEffect(() => {
-    setAmount(Number(quantity) * Number(rate));
+    // setAmount(Number(quantity) * Number(rate));
+    setAmount(Number((Number(quantity) * Number(rate)).toFixed(2)));
   }, [quantity, rate]);
   return (
     <div>

@@ -35,12 +35,12 @@ const Page = () => {
 
     // Add table headers
     const headers = [
-      "Dyeing Date",
+      "Date",
       "Lot No",
       "Party Name",
       "Process",
       "Quality",
-      "PO No",
+      "Machine No",
       "Process",
       "Weight (kg)",
       "Half Bleach Cost",
@@ -299,7 +299,7 @@ const Page = () => {
                   <th className="bg-red-700 text-white py-4">Party Name</th>
                   <th className="bg-red-700 text-white py-4">Process</th>
                   <th className="bg-red-700 text-white py-4">Quantity</th>
-                  <th className="bg-red-700 text-white py-4">PO No</th>
+                  <th className="bg-red-700 text-white py-4">Machine No</th>
                   <th className="bg-red-700 text-white py-4">Process</th>
                   <th className="bg-red-700 text-white py-4">Weight Kg</th>
                   <th className="bg-red-700 text-white py-4">

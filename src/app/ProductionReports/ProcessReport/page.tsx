@@ -35,12 +35,12 @@ const Page = () => {
 
     // Add table headers
     const headers = [
-      "Dyeing Date",
+      "Date",
       "Lot No",
       "Party Name",
       "Process",
       "Quality",
-      "PO No",
+      "Machine No",
       "Process",
       "Weight (kg)",
       "Half Bleach Cost",
@@ -153,7 +153,7 @@ const Page = () => {
       <div className="max-w-screen-md mx-auto bg-slate-100 p-5 shadow-2xl mt-8 mb-10">
         <div className="text-center mb-16">
           <p className="mt-4 text-2xl leading-7 text-red-600 font-bold uppercase">
-            Party Name and Process Production Report
+            Process Production Report
           </p>
           <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
             JHUDO <span className="text-indigo-600">TEXTILE</span>
@@ -253,7 +253,7 @@ const Page = () => {
                   <th className="bg-red-700 text-white py-4">Party Name</th>
                   <th className="bg-red-700 text-white py-4">Process</th>
                   <th className="bg-red-700 text-white py-4">Quantity</th>
-                  <th className="bg-red-700 text-white py-4">PO No</th>
+                  <th className="bg-red-700 text-white py-4">Machine No</th>
                   <th className="bg-red-700 text-white py-4">Process</th>
                   <th className="bg-red-700 text-white py-4">Weight Kg</th>
                   <th className="bg-red-700 text-white py-4">

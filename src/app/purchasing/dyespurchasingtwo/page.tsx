@@ -165,6 +165,7 @@ const Page = () => {
     getSuppliers();
   }, []);
   useEffect(() => {
+    // setAmount(Number(quantity) * Number(rate));
     setAmount(Number((Number(quantity) * Number(rate)).toFixed(2)));
   }, [quantity, rate]);
   return (
@@ -342,8 +343,8 @@ const Page = () => {
                   <th className="bg-red-700 text-white py-4">Quantity</th>
                   <th className="bg-red-700 text-white py-4">Rate</th>
                   <th className="bg-red-700 text-white py-4">Amount</th>
-                  <th className="bg-red-700 text-white py-4">Edit</th>
-                  <th className="bg-red-700 text-white py-4">Delete</th>
+                  {/* <th className="bg-red-700 text-white py-4">Edit</th>
+                  <th className="bg-red-700 text-white py-4">Delete</th> */}
                 </tr>
               </thead>
               <tbody>
@@ -356,12 +357,12 @@ const Page = () => {
                     <td>{String(item?.quantity)}</td>
                     <td>{String(item?.rate)}</td>
                     <td>{String(item?.amount)}</td>
-                    <td>
+                    {/* <td>
                       <FaEdit onClick={() => handleEdit(item)} />
-                    </td>
-                    <td>
+                    </td> */}
+                    {/* <td>
                       <FaTrash onClick={() => handleDelete(item._id)} />
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>

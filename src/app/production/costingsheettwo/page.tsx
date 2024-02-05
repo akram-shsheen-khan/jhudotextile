@@ -58,6 +58,22 @@ const Page = () => {
       amount: 0,
     },
   ]);
+
+  const [dyesName, setDyesName] = useState<Array<dyesNameConsumptionI>>([
+    {
+      dyeingdate,
+      lotno,
+      dyesname: "",
+      quantity: 0,
+      rate: 0,
+      amount: 0,
+    },
+  ]);
+
+  const [dyeingChemical, setDyeingChemical] = useState<Array<DyeingChemicalI>>([
+    { dyeingdate, lotno, chemicalname: "", quantity: 0, rate: 0, amount: 0 },
+  ]);
+
   useEffect(() => {
     setHBChemical(
       HBchemical.map((c: any) => ({
@@ -91,19 +107,6 @@ const Page = () => {
     );
   }, [dyeingdate, lotno]);
 
-  const [dyesName, setDyesName] = useState<Array<dyesNameConsumptionI>>([
-    {
-      dyeingdate,
-      lotno,
-      dyesname: "",
-      quantity: 0,
-      rate: 0,
-      amount: 0,
-    },
-  ]);
-  const [dyeingChemical, setDyeingChemical] = useState<Array<DyeingChemicalI>>([
-    { dyeingdate, lotno, chemicalname: "", quantity: 0, rate: 0, amount: 0 },
-  ]);
   const [thbamount, setTHBAmount] = useState<number>(0);
 
   const [tdamount, setTDAmount] = useState<number>(0);
@@ -418,7 +421,14 @@ const Page = () => {
 
   useEffect(() => {
     setTotalCost(
-      Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
+      // Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
+      Number(
+        (
+          Number(halfbleachcost) +
+          Number(dyescost) +
+          Number(dyeingchemicalcost)
+        ).toFixed(2)
+      )
     );
   }, [halfbleachcost, dyescost, dyeingchemicalcost]);
 
@@ -435,6 +445,7 @@ const Page = () => {
         "🚀 ~ file: page.tsx:432 ~ Page ~",
         ["chemicalname", "dyesname"].includes(propertyName)
       );
+
       const updatedObject = ["chemicalname", "dyesname"].includes(propertyName)
         ? {
             ...arr[index],
@@ -632,7 +643,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
           <div className="flex flex-col">
             <div className="text-center">
               <label className="block text-xl text-green-800 font-semibold mb-1">
-                PN NO
+                Machine No
               </label>
             </div>
             <div className="text-center">
@@ -1246,7 +1257,7 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                     <th className="bg-red-700 text-white py-4">Party Name</th>
                     <th className="bg-red-700 text-white py-4">Color</th>
                     <th className="bg-red-700 text-white py-4">Quality</th>
-                    <th className="bg-red-700 text-white py-4">PO No</th>
+                    <th className="bg-red-700 text-white py-4">Machine No</th>
                     <th className="bg-red-700 text-white py-4">Process</th>
                     <th className="bg-red-700 text-white py-4">Weight Kg</th>
                     <th className="bg-red-700 text-white py-4">HB Cost</th>

@@ -1,41 +1,55 @@
+// "use client";
+// import { publicAPI } from "../../../config/constants";
+// import { useEffect, useState } from "react";
+// import { FaTrash, FaEdit } from "react-icons/fa";
+// import { toast, ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+// import { Select } from "antd";
+// // import moment from "moment";
+// import { ChemicalI } from "../../types/interface/chemicalName";
+// import { SupplierI } from "../../types/interface/suppliertName";
+// import { ChemicalPurchasingI } from "../../types/interface/chemicalPurchasing";
+// import { handleFocus } from "../../../utils/globalFunctions";
+// import withAuth from "@/utils/withAuth";
+
 "use client";
-import { publicAPI } from "../../../config/constants";
+import { publicAPI } from "@/config/constants";
 import { useEffect, useState } from "react";
 import { FaTrash, FaEdit } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { Select } from "antd";
-// import moment from "moment";
-
-import { SupplierI } from "../../types/interface/suppliertName";
-import { DyesPurchasingI } from "../../types/interface/dyesPurchasing";
-import { handleFocus } from "../../../utils/globalFunctions";
-import { DyesI } from "../../types/interface/dyesName";
+import { ChemicalI } from "@/app/types/interface/chemicalName";
+import { SupplierI } from "@/app/types/interface/suppliertName";
+import { ChemicalPurchasingI } from "@/app/types/interface/chemicalPurchasing";
+import { handleFocus } from "@/utils/globalFunctions";
 import withAuth from "@/utils/withAuth";
+import ChemicalPurchasing from "@/app/lib/models/chemicalPurchasing";
 
 const Page = () => {
   const [date, setDate] = useState<string>("");
-  const [challanno, setChallanno] = useState<string>("");
-  const [dyesname, setDyesName] = useState<string>("");
-  const [suppliername, setSupliername] = useState<string>("");
+  const [challanno, setChallanNo] = useState<string>("");
+  const [chemicalname, setChemicalName] = useState<string>("");
+  const [suppliername, setSupplierName] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(0);
   const [rate, setRate] = useState<number>(0);
   const [amount, setAmount] = useState<number>(0);
-  const [dyesPurchasing, setDyesPurchasing] = useState<Array<DyesPurchasingI>>(
-    []
-  );
-  const [dyesNames, setDyesNames] = useState<Array<DyesI>>([]);
+  const [chemicalPurchasing, setChemicalPurchasing] = useState<
+    Array<ChemicalPurchasingI>
+  >([]);
+  const [chemicalNames, setChemicalNames] = useState<Array<ChemicalI>>([]);
   const [supplierNames, setsupplierNames] = useState<Array<SupplierI>>([]);
-  const [onEdit, setOnEdit] = useState<DyesPurchasingI | null>(null);
+  const [onEdit, setOnEdit] = useState<ChemicalPurchasingI | null>(null);
 
   const onFinish = () => {
     if (onEdit) {
       publicAPI
-        .put(`/dyesPurchasing`, {
+        .put(`/chemicalPurchasing`, {
           id: onEdit._id,
           payload: {
             date,
             challanno,
-            dyesname,
+            chemicalname,
             suppliername,
             quantity,
             rate,
@@ -43,23 +57,23 @@ const Page = () => {
           },
         })
         .then(({ data }) => {
-          getDyesPurchasing();
+          getChemicalPurchasing();
           toast.success(data);
         })
         .catch(({ data }) => toast.error(data));
     } else {
       publicAPI
-        .post(`/dyesPurchasing`, {
+        .post(`/chemicalPurchasing`, {
           date,
           challanno,
-          dyesname,
+          chemicalname,
           suppliername,
           quantity,
           rate,
           amount,
         })
         .then(({ data }) => {
-          getDyesPurchasing();
+          getChemicalPurchasing();
 
           toast.success(data);
           console.log(data);
@@ -70,29 +84,29 @@ const Page = () => {
     }
     setOnEdit(null);
     setDate("");
-    setChallanno("");
-    setDyesName("");
-    setSupliername("");
+    setChallanNo("");
+    setChemicalName("");
+    setSupplierName("");
     setQuantity(0);
     setRate(0);
     setAmount(0);
   };
-  const handleEdit = (item: DyesPurchasingI) => {
+  const handleEdit = (item: ChemicalPurchasingI) => {
     setOnEdit(item);
   };
-  const onChangeDyes = (value: string) => {
+  const onChangeChemical = (value: string) => {
     console.log(`selected ${value}`);
-    setDyesName(value);
+    setChemicalName(value);
   };
   const onChangeSupplier = (value: string) => {
     console.log(`selected ${value}`);
-    setSupliername(value);
+    setSupplierName(value);
   };
   const handleDelete = async (id: string) => {
     publicAPI
-      .patch(`/dyesPurchasing`, { id })
+      .patch(`/chemicalPurchasing`, { id })
       .then(({ data }) => {
-        getDyesPurchasing();
+        getChemicalPurchasing();
 
         toast.success(data);
         console.log(data);
@@ -103,9 +117,9 @@ const Page = () => {
 
     setOnEdit(null);
     setDate("");
-    setChallanno("");
-    setDyesName("");
-    setSupliername("");
+    setChallanNo("");
+    setChemicalName("");
+    setSupplierName("");
     setQuantity(0);
     setRate(0);
     setAmount(0);
@@ -113,39 +127,41 @@ const Page = () => {
   useEffect(() => {
     if (onEdit) {
       setDate(String(onEdit.date));
-      setChallanno(String(onEdit.challanno));
-      setDyesName(String(onEdit.dyesname));
-      setSupliername(String(onEdit.suppliername));
+      setChallanNo(String(onEdit.challanno));
+      setChemicalName(String(onEdit.chemicalname));
+      setSupplierName(String(onEdit.suppliername));
       setQuantity(Number(onEdit.quantity));
       setRate(Number(onEdit.rate));
       setAmount(Number(onEdit.amount));
     }
   }, [onEdit]);
 
-  const getDyesPurchasing = async () => {
+  const getChemicalPurchasing = async () => {
     try {
       publicAPI
-        .get(`/dyesPurchasing`)
+        .get(`/chemicalPurchasing`)
 
         .then(({ data }) => {
-          setDyesPurchasing(data);
+          setChemicalPurchasing(data);
         });
     } catch (error: any) {
       toast.error(error);
     }
   };
-  const getDyess = async () => {
+
+  const getChemicals = async () => {
     try {
       publicAPI
-        .get(`/dyesname`)
+        .get(`/chemicalname`)
 
         .then(({ data }) => {
-          setDyesNames(data);
+          setChemicalNames(data);
         });
     } catch (error: any) {
       toast.error(error);
     }
   };
+
   const getSuppliers = async () => {
     try {
       publicAPI
@@ -160,8 +176,8 @@ const Page = () => {
   };
 
   useEffect(() => {
-    getDyesPurchasing();
-    getDyess();
+    getChemicalPurchasing();
+    getChemicals();
     getSuppliers();
   }, []);
   useEffect(() => {
@@ -169,10 +185,10 @@ const Page = () => {
   }, [quantity, rate]);
   return (
     <div>
-      <div className="max-w-screen-md mx-auto p-5">
+      <div className="max-w-screen-md mx-auto p-5 shadow-2xl my-6">
         <div className="text-center mb-16">
           <p className="mt-4 text-sm leading-7 text-gray-500 font-regular uppercase">
-            Dyes Purchasing Form
+            Chemical Purchasing
           </p>
           <h3 className="text-3xl sm:text-4xl leading-normal font-extrabold tracking-tight text-gray-900">
             JHUDO <span className="text-indigo-600">TEXTILE</span>
@@ -203,7 +219,7 @@ const Page = () => {
                 id="challanno"
                 type="text"
                 value={challanno}
-                onChange={(e) => setChallanno(e.target.value)}
+                onChange={(e) => setChallanNo(e.target.value)}
                 placeholder="Challan No"
               />
             </div>
@@ -211,26 +227,26 @@ const Page = () => {
           <div className="flex flex-wrap -mx-3 mb-6">
             <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
               <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                Dyes Name
+                Chemical Name
               </label>
               <Select
                 className="appearance-none block bg-gray-200 w-full text-gray-700 border border-red-500 rounded mb-4 leading-tight focus:outline-none focus:bg-green-100 md:w-[350px] h-11"
                 showSearch
-                placeholder="Select a Dyes"
-                value={dyesname}
+                placeholder="Select a chemical"
+                value={chemicalname}
                 optionFilterProp="children"
-                onChange={onChangeDyes}
+                onChange={onChangeChemical}
                 filterOption={(input, option) =>
                   String(option?.label ?? "")
                     .toLowerCase()
                     .includes(input.toLowerCase())
                 }
                 options={
-                  dyesNames?.length > 0
-                    ? dyesNames.map((chemical: DyesI) => {
+                  chemicalNames?.length > 0
+                    ? chemicalNames.map((chemical: ChemicalI) => {
                         return {
-                          value: chemical.dyesname,
-                          label: chemical.dyesname,
+                          value: chemical.chemicalname,
+                          label: chemical.chemicalname,
                         };
                       })
                     : []
@@ -326,10 +342,14 @@ const Page = () => {
               </button>
             </div>
           </div>
+          <ToastContainer
+            autoClose={3000}
+            position={toast.POSITION.BOTTOM_LEFT}
+          />
         </form>
       </div>
 
-      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10">
+      <div className="h-full w-9/12 bg-slate-400 mx-auto mb-10 shadow-2xl">
         <div className="h-60 w-full grid gap-2 p-2 grid-cols-2 grid-rows-2">
           <div className="col-span-2 row-span-2 rounded-xl bg-white overflow-auto">
             <table className="table-auto w-full">
@@ -337,31 +357,31 @@ const Page = () => {
                 <tr>
                   <th className="bg-red-700 text-white py-4">Date</th>
                   <th className="bg-red-700 text-white py-4">Challan No</th>
-                  <th className="bg-red-700 text-white py-4">Dyes Name</th>
+                  <th className="bg-red-700 text-white py-4">Chemical Name</th>
                   <th className="bg-red-700 text-white py-4">Supplier Name</th>
                   <th className="bg-red-700 text-white py-4">Quantity</th>
                   <th className="bg-red-700 text-white py-4">Rate</th>
                   <th className="bg-red-700 text-white py-4">Amount</th>
-                  <th className="bg-red-700 text-white py-4">Edit</th>
-                  <th className="bg-red-700 text-white py-4">Delete</th>
+                  {/* <th className="bg-red-700 text-white py-4">Edit</th>
+                  <th className="bg-red-700 text-white py-4">Delete</th> */}
                 </tr>
               </thead>
               <tbody>
-                {dyesPurchasing?.map((item: DyesPurchasingI) => (
+                {chemicalPurchasing?.map((item: ChemicalPurchasingI) => (
                   <tr key={item._id}>
-                    <td>{item?.date}</td>
-                    <td>{item?.challanno}</td>
-                    <td>{item?.dyesname}</td>
-                    <td>{item?.suppliername}</td>
-                    <td>{String(item?.quantity)}</td>
-                    <td>{String(item?.rate)}</td>
-                    <td>{String(item?.amount)}</td>
-                    <td>
+                    <td width="20%">{item?.date}</td>
+                    <td width="15%">{item?.challanno}</td>
+                    <td width="15%">{item?.chemicalname}</td>
+                    <td width="15%">{item?.suppliername}</td>
+                    <td width="15%">{String(item?.quantity)}</td>
+                    <td width="15%">{String(item?.rate)}</td>
+                    <td width="10%">{String(item?.amount)}</td>
+                    {/* <td width="5%">
                       <FaEdit onClick={() => handleEdit(item)} />
                     </td>
-                    <td>
+                    <td width="5%">
                       <FaTrash onClick={() => handleDelete(item._id)} />
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -372,5 +392,4 @@ const Page = () => {
     </div>
   );
 };
-
 export default withAuth(Page);
