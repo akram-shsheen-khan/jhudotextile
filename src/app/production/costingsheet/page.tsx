@@ -418,7 +418,14 @@ const Page = () => {
 
   useEffect(() => {
     setTotalCost(
-      Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
+      // Number(halfbleachcost) + Number(dyescost) + Number(dyeingchemicalcost)
+      Number(
+        (
+          Number(halfbleachcost) +
+          Number(dyescost) +
+          Number(dyeingchemicalcost)
+        ).toFixed(2)
+      )
     );
   }, [halfbleachcost, dyescost, dyeingchemicalcost]);
 
