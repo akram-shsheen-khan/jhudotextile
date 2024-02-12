@@ -1,16 +1,15 @@
 "use client";
 import { publicAPI } from "../../../config/constants";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 // import moment from "moment";
 
-import { ProcessI } from "../../types/interface/process";
 import withAuth from "@/utils/withAuth";
 import { CostingSheetI } from "@/app/types/interface/costingSheet";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { FaPrint } from "react-icons/fa";
-import { HBChemicalI } from "@/app/types/interface/HBChemical";
+
 import { dyesNameConsumptionI } from "@/app/types/interface/dyesNameConsumption";
 import { DyeingChemicalI } from "@/app/types/interface/DyeingChemical";
 
