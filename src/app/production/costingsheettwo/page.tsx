@@ -112,35 +112,64 @@ const Page = () => {
   const [tdamount, setTDAmount] = useState<number>(0);
 
   const [tdchamount, setTDCHAmount] = useState<number>(0);
-
+  const getConsumptions = async (lotno: any) => {
+    try {
+      publicAPI
+        .post(`/costingSheet/consumptions`, { lotno })
+        .then(({ data }) => {
+          setHBChemical(
+            data?.hbchemicalconsumptions?.length
+              ? data?.hbchemicalconsumptions
+              : [
+                  {
+                    dyeingdate,
+                    lotno,
+                    chemicalname: "",
+                    quantity: 0,
+                    rate: 0,
+                    amount: 0,
+                  },
+                ]
+          );
+          setDyesName(
+            data?.dyesNameconsumptions?.length
+              ? data?.dyesNameconsumptions
+              : [
+                  {
+                    dyeingdate,
+                    lotno,
+                    dyesname: "",
+                    quantity: 0,
+                    rate: 0,
+                    amount: 0,
+                  },
+                ]
+          );
+          setDyeingChemical(
+            data?.dchemicalconsumptions?.length
+              ? data?.dchemicalconsumptions
+              : [
+                  {
+                    dyeingdate,
+                    lotno,
+                    chemicalname: "",
+                    quantity: 0,
+                    rate: 0,
+                    amount: 0,
+                  },
+                ]
+          );
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
   const onFinish = () => {
     if (onEdit) {
+      console.log("🚀 ~ onFinish ~ onEdit:");
       publicAPI
         .put(`/costingSheet`, {
           id: onEdit._id,
-          payload: {
-            dyeingdate,
-            lotno,
-            partyname,
-            color,
-            quality,
-            pono,
-            process,
-            weightkg,
-            halfbleachcost,
-            dyescost,
-            dyeingchemicalcost,
-            totalcost,
-          },
-        })
-        .then(({ data }) => {
-          getCostingSheet();
-          toast.success(data);
-        })
-        .catch(({ data }) => toast.error(data));
-    } else {
-      publicAPI
-        .post(`/costingSheet`, {
           payload: {
             dyeingdate,
             lotno,
@@ -192,26 +221,102 @@ const Page = () => {
               amount: 0,
             },
           ]);
+
+          setOnEdit(null);
+          setDyeingDate("");
+          setLotNo("");
+          setPartyName("");
+          setColor("");
+          setQuality("");
+          setPono("");
+          setProcess("");
+          setWeightkg(0);
+          setHalfBleachCost(0);
+          setDyesCost(0);
+          setDyeingChemicalCost(0);
+          setTotalCost(0);
           toast.success(data);
+        })
+        .catch((e) => {
+          console.log("🚀 ~ onFinish ~ e:", e);
+          // toast.error(data)
+        });
+    } else {
+      publicAPI
+        .post(`/costingSheet`, {
+          payload: {
+            dyeingdate,
+            lotno,
+            partyname,
+            color,
+            quality,
+            pono,
+            process,
+            weightkg,
+            halfbleachcost,
+            dyescost,
+            dyeingchemicalcost,
+            totalcost,
+          },
+          HBchemical: HBchemical[0].chemicalname == "" ? [] : HBchemical,
+          dyesName: dyesName[0].dyesname == "" ? [] : dyesName,
+          dyeingChemical:
+            dyeingChemical[0].chemicalname == "" ? [] : dyeingChemical,
+        })
+        .then(({ data }) => {
+          toast.success(data?.message);
+          getCostingSheet();
+          setHBChemical([
+            {
+              dyeingdate,
+              lotno,
+              chemicalname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
+          setDyesName([
+            {
+              dyeingdate,
+              lotno,
+              dyesname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
+          setDyeingChemical([
+            {
+              dyeingdate,
+              lotno,
+              chemicalname: "",
+              quantity: 0,
+              rate: 0,
+              amount: 0,
+            },
+          ]);
+
+          setOnEdit(null);
+          setDyeingDate("");
+          setLotNo("");
+          setPartyName("");
+          setColor("");
+          setQuality("");
+          setPono("");
+          setProcess("");
+          setWeightkg(0);
+          setHalfBleachCost(0);
+          setDyesCost(0);
+          setDyeingChemicalCost(0);
+          setTotalCost(0);
           console.log(data);
         })
-        .catch(({ data }) => {
-          toast.error(data);
+        .catch((e) => {
+          console.log("🚀 ~ onFinish ~ e:", e?.response?.data?.message);
+          toast.error(e?.response?.data?.message || "server error");
         });
     }
-    setOnEdit(null);
-    setDyeingDate("");
-    setLotNo("");
-    setPartyName("");
-    setColor("");
-    setQuality("");
-    setPono("");
-    setProcess("");
-    setWeightkg(0);
-    setHalfBleachCost(0);
-    setDyesCost(0);
-    setDyeingChemicalCost(0);
-    setTotalCost(0);
   };
 
   const onChangePartyName = (value: string) => {
@@ -253,21 +358,10 @@ const Page = () => {
       setDyesCost(Number(onEdit.dyescost));
       setDyeingChemicalCost(Number(onEdit.dyeingchemicalcost));
       setTotalCost(Number(onEdit.totalcost));
+      getConsumptions(Number(onEdit?.lotno));
     }
   }, [onEdit]);
 
-  const getCostingSheet = async () => {
-    try {
-      publicAPI
-        .get(`/costingSheet`)
-
-        .then(({ data }) => {
-          setCostingSheet(data);
-        });
-    } catch (error: any) {
-      toast.error(error);
-    }
-  };
   const getPartyNames = async () => {
     try {
       publicAPI
@@ -486,6 +580,25 @@ const Page = () => {
     // If the index is out of bounds, return the original array
     return arr;
   };
+
+  const deleteRow = (arr: any, index: any, propertyName: any) => {
+    console.log(
+      "🚀 ~ deleteRow ~ arr: any, index: any, propertyName: any:",
+      arr?.length,
+      index,
+      propertyName
+    );
+    if (index >= 0 && index < arr.length) {
+      const newArray = [...arr.slice(0, index), ...arr.slice(index + 1)];
+      console.log("🚀 ~ deleteRow ~ newArray:", newArray?.length);
+      console.log("ddsdsdsf");
+      propertyName == "chemicalname"
+        ? setHBChemical(newArray)
+        : propertyName == "dyesname"
+        ? setDyesName(newArray)
+        : setDyeingChemical(newArray);
+    }
+  };
   useEffect(() => {
     setTHBAmount(HBchemical.reduce((a: any, b: any) => a + b.amount, 0));
   }, [HBchemical]);
@@ -499,7 +612,26 @@ const Page = () => {
   const handleEdit = (item: any) => {
     setOnEdit(item);
   };
+  const getCostingSheet = async (search = "") => {
+    try {
+      publicAPI
+        .get(`/costingSheet?search=${search}`)
 
+        .then(({ data }) => {
+          setCostingSheet(data);
+        });
+    } catch (error: any) {
+      toast.error(error);
+    }
+  };
+  const [search, setSearch] = useState<string>("");
+  const onSearch = () => {
+    getCostingSheet(search);
+  };
+  const resetSearch = () => {
+    setSearch("");
+    getCostingSheet("");
+  };
   return (
     <div>
       <div className="container max-w-5xl mx-auto shadow-2xl">
@@ -915,9 +1047,16 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                     type="number"
                     placeholder="Amount"
                     disabled
-                    value={c?.amount}
+                    value={Number(c?.amount)?.toFixed(2)}
                   />
                 </div>
+                {HBchemical[0].chemicalname && (
+                  <button
+                    onClick={() => deleteRow(HBchemical, i, "chemicalname")}
+                  >
+                    <FaTrash className="text-white bg-red-700 rounded w-15 h-15 "></FaTrash>
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -1060,9 +1199,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                     type="number"
                     placeholder="Amount"
                     disabled
-                    value={c?.amount}
+                    value={Number(c?.amount)?.toFixed(2)}
                   />
                 </div>
+                {dyesName[0].dyesname && (
+                  <button onClick={() => deleteRow(dyesName, i, "dyesname")}>
+                    <FaTrash className="text-white bg-red-700 rounded w-15 h-15 "></FaTrash>
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -1211,9 +1355,14 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
                     type="number"
                     placeholder="Amount"
                     disabled
-                    value={c?.amount}
+                    value={Number(c?.amount)?.toFixed(2)}
                   />
                 </div>
+                {dyeingChemical[0].chemicalname && (
+                  <button onClick={() => deleteRow(dyeingChemical, i, "")}>
+                    <FaTrash className="text-white bg-red-700 rounded w-15 h-15 "></FaTrash>
+                  </button>
+                )}
               </div>
             </div>
           ))}
@@ -1242,11 +1391,30 @@ grid lg:grid-cols-4 gap-3 md:grid-cols-2 sm:grid-cols-2 md:mx-[50px] sm:mx-6 mx-
               onClick={onFinish}
               className="bg-red-600 w-44 text-white h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4"
             >
-              Save
+              {onEdit ? "Upate" : "Save"}
             </button>
           </div>
         </div>
-        <div className="h-full w-9/12 bg-slate-400 mx-auto">
+        <div className="h-full w-9/12 bg-slate-400 mx-auto p-5">
+          <input
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              console.log(e.target.value);
+            }}
+          />
+          <button
+            className="bg-green-600 mx-3 w-44 text-white h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4"
+            onClick={onSearch}
+          >
+            Search
+          </button>
+          <button
+            className="bg-red-600 w-44 text-white h-12 border-2 mb-11 border-gray-600 rounded-full drop-shadow-xl shadow-inner transition-all duration-150 opacity-95  bg-[linear-gradient(#ffffff99,ffffff00_50%,#ffffff33)] before:contents-[''] before:block before:absolute before:right-2 before:left-2 before:top-0.5 before:h-4"
+            onClick={resetSearch}
+          >
+            reset
+          </button>
           <div className="h-60 w-full grid gap-2 p-2 grid-cols-2 grid-rows-2">
             <div className="col-span-2 row-span-2 rounded-xl bg-white overflow-auto">
               <table className="table-auto w-full">

@@ -10,11 +10,14 @@ import chemicalname from "@/app/lib/models/chemicalname";
 export async function POST(req: Request, res: NextResponse) {
   // const {} = req.body
   const { year, month } = await req.json();
+  console.log("🚀 ~ POST ~ year, month:", year, month);
   await connectToDataBase();
+  const formattedmonth = String(month).padStart(2, "0");
+  console.log("🚀 ~ POST ~ formattedmonth:", formattedmonth);
   const dcCemicalConsumptionStock = await dchemicalconsumption.aggregate([
     {
       $match: {
-        dyeingdate: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
+        dyeingdate: { $regex: `^${year}-${formattedmonth}` }, // Match entries for the specified year and month
       },
     },
     {
@@ -27,7 +30,7 @@ export async function POST(req: Request, res: NextResponse) {
   const hbCemicalConsumptionStock = await hbchemicalconsumption.aggregate([
     {
       $match: {
-        dyeingdate: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
+        dyeingdate: { $regex: `^${year}-${formattedmonth}` }, // Match entries for the specified year and month
       },
     },
     {
@@ -40,7 +43,7 @@ export async function POST(req: Request, res: NextResponse) {
   const ChemicalPurchasingStock = await chemicalPurchasing.aggregate([
     {
       $match: {
-        date: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
+        date: { $regex: `^${year}-${formattedmonth}` }, // Match entries for the specified year and month
       },
     },
     {
@@ -54,7 +57,7 @@ export async function POST(req: Request, res: NextResponse) {
   const stockResult = await stock.aggregate([
     {
       $match: {
-        date: { $regex: `^${year}-${month}` }, // Match entries for the specified year and month
+        date: { $regex: `^${year}-${formattedmonth}` }, // Match entries for the specified year and month
       },
     },
     {
